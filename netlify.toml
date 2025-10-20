@@ -10,13 +10,13 @@
 # Proxy para el backend
 [[redirects]]
   from = "/api/*"
-  to = "https://backend-elf3.onrender.com/api/:splat"
+  to = "https://backend-5wh5.onrender.com/api/:splat"
   status = 200
   force = true
 
 # Proxy para archivos subidos (imágenes de productos)
 [[redirects]]
   from = "/uploads/*"
-  to = "https://backend-elf3.onrender.com/uploads/:splat"
+  to = "https://backend-5wh5.onrender.com/uploads/:splat"
   status = 200
   force = true
