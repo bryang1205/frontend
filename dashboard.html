@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrepIA - Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: "Inter", sans-serif; }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .stats-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 28px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+        .stats-card:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-3px);
+        }
+
+        .pdf-viewer {
+            width: 100%;
+            height: 80vh;
+            border: none;
+            border-radius: 12px;
+            background: white;
+        }
+
+        .btn-primary {
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+        }
+
+        .curso-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-indigo-700 via-purple-600 to-pink-600">
+
+<!-- LOADING -->
+<div id="loadingScreen" class="min-h-screen flex items-center justify-center">
+    <div class="text-center">
+        <div class="bg-white/20 p-5 rounded-2xl inline-block mb-4 backdrop-blur-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" class="text-white animate-pulse"
+                 fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2a10 10 0 0 0-7.5 16.65l.5.85H19l.5-.85A10 10 0 0 0 12 2Z"/>
+                <path d="M12 2v20"/>
+            </svg>
+        </div>
+        <p class="text-white text-xl font-semibold">Cargando tu espacio...</p>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboardApp" class="hidden">
+
+    <!-- HEADER -->
+    <header class="bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center px-8 py-4">
+
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="text-white" width="28" height="28"
+                         fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2a10 10 0 0 0-7.5 16.65l.5.85H19l.5-.85A10 10 0 0 0 12 2Z"/>
+                        <path d="M12 2v20"/>
+                    </svg>
+                </div>
+                <span class="text-2xl text-white font-bold">PrepIA</span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <span id="userName" class="text-white font-medium text-lg"></span>
+                <button id="logoutBtn" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-5 py-2.5 rounded-xl text-white font-medium transition">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl mx-auto px-8 py-12">
+
+        <!-- BIENVENIDA -->
+        <div id="mainDashboard" class="fade-in">
+
+            <div class="text-center mb-12">
+                <h1 id="welcomeTitle" class="text-5xl font-bold text-white mb-4"></h1>
+                <p class="text-white/80 text-xl mb-2">Tu tutor inteligente con IA para la universidad</p>
+                <p class="text-white/60 text-sm">Powered by GPT-4</p>
+            </div>
+
+            <!-- STATS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+
+                <div class="stats-card">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-blue-500/20 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-200">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-white/70 text-sm mb-1">Preguntas</p>
+                            <p id="preguntasCount" class="text-4xl text-white font-bold">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-green-500/20 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" class="text-green-200">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-white/70 text-sm mb-1">Correctas</p>
+                            <p id="correctasCount" class="text-4xl text-white font-bold">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-purple-500/20 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" class="text-purple-200">
+                                <path d="M3 3v18h18"/>
+                                <path d="m19 9-5 5-4-4-3 3"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-white/70 text-sm mb-1">Precisión</p>
+                            <p id="precisionCount" class="text-4xl text-white font-bold">0%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARDS PRINCIPALES -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+
+                <!-- TUTOR -->
+                <div class="card cursor-pointer" onclick="location.href='chat.html'">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="bg-indigo-100 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" class="text-indigo-600">
+                                <path d="M12 2a10 10 0 0 0-7.5 16.65l.5.85H19l.5-.85A10 10 0 0 0 12 2Z"/>
+                                <path d="M12 2v20"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800">🧠 Tutor Inteligente</h2>
+                    </div>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Practica con IA que adapta preguntas a tu nivel y te explica cada respuesta paso a paso.
+                    </p>
+
+                    <button class="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold hover:shadow-xl transition btn-primary">
+                        Iniciar conversación con IA
+                    </button>
+                </div>
+
+                <!-- EXAMEN -->
+                <div class="card cursor-pointer" onclick="location.href='examen.html'">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="bg-rose-100 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" class="text-rose-600">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800">📝 Examen de Práctica</h2>
+                    </div>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Pon a prueba tus conocimientos con un examen completo tipo admisión UNT.
+                    </p>
+
+                    <button class="w-full py-4 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold hover:shadow-xl transition btn-primary">
+                        Iniciar Examen
+                    </button>
+                </div>
+            </div>
+
+            <!-- BIBLIOTECA (destacada) -->
+            <div class="text-center">
+                <div class="inline-block card cursor-pointer max-w-3xl w-full" onclick="mostrarBiblioteca()">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-4 rounded-xl shadow-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" class="text-white">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                </svg>
+                            </div>
+                            <div class="text-left">
+                                <h2 class="text-2xl font-bold text-gray-800 mb-1">📚 Cursos para Aprender</h2>
+                                <p class="text-gray-600">Accede a materiales PDF organizados por cursos y semanas</p>
+                            </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ----------------------------- -->
+        <!-- SECCIÓN BIBLIOTECA INTEGRADA -->
+        <!-- ----------------------------- -->
+
+        <div id="breadcrumb" class="text-white text-lg font-medium mb-8 hidden fade-in flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            </svg>
+        </div>
+
+        <div id="vistaCursos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden fade-in"></div>
+
+        <div id="vistaSemanas" class="hidden fade-in">
+            <button onclick="volverACursos()" class="mb-6 px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-xl font-medium transition flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+                Volver a Cursos
+            </button>
+            <div id="listaSemanas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <div id="vistaPDF" class="hidden fade-in">
+            <button onclick="volverASemanas()" class="mb-6 px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-xl font-medium transition flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+                Volver a Semanas
+            </button>
+
+            <div class="bg-white rounded-2xl shadow-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 id="tituloPDF" class="text-2xl font-bold text-gray-800"></h3>
+                    <span class="curso-badge bg-indigo-100 text-indigo-700">📄 Material de estudio</span>
+                </div>
+                <iframe id="pdfViewer" class="pdf-viewer"></iframe>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- ================================ -->
+<!-- SCRIPT UNIFICADO (Dashboard+Bib) -->
+<!-- ================================ -->
+<script>
+/* ------------------ AUTENTICACIÓN ------------------ */
+
+document.addEventListener("DOMContentLoaded", () => {
+    const USER_NAME = localStorage.getItem("prepIA_userName");
+    const USER_ID = localStorage.getItem("prepIA_userID");
+
+    if (!USER_ID || !USER_NAME) {
+        window.location.href = "register.html";
+        return;
+    }
+
+    userName.textContent = USER_NAME.split(" ")[0];
+    welcomeTitle.textContent = `¡Bienvenido, ${USER_NAME.split(" ")[0]}! 🎓`;
+
+    setTimeout(() => {
+        loadingScreen.classList.add("hidden");
+        dashboardApp.classList.remove("hidden");
+    }, 800);
+});
+
+logoutBtn.onclick = () => {
+    localStorage.removeItem("prepIA_userID");
+    localStorage.removeItem("prepIA_userName");
+    window.location.href = "index.html";
+};
+
+/* ------------------ BIBLIOTECA ------------------ */
+
+const MATERIALES = {
+    algebra:{nombre:"Álgebra",emoji:"🔢",color:"blue",semanas:{"Semana 1":{nombre:"ÁLGEBRA S1",archivo:"ALGEBRA S1.pdf"}}},
+    fisica:{nombre:"Física",emoji:"⚡",color:"green",semanas:{"Semana 1":{nombre:"FÍSICA S1",archivo:"FISICA S1.pdf"}}},
+    geometria:{nombre:"Geometría",emoji:"📐",color:"purple",semanas:{"Semana 1":{nombre:"GEOMETRIA S1",archivo:"GEOMETRIA S1.pdf"}}},
+    trigonometria:{nombre:"Trigonometría",emoji:"📊",color:"pink",semanas:{"Semana 1":{nombre:"TRIGO S1",archivo:"TRIGO S1.pdf"}}},
+    razmat:{nombre:"Raz. Matemático",emoji:"🧮",color:"orange",semanas:{"Semana 1":{nombre:"RAZ MAT S1",archivo:"RAZ MAT S1.pdf"}}},
+};
+
+let cursoActual = null;
+let semanaActual = null;
+
+function mostrarBiblioteca() {
+    mainDashboard.classList.add("hidden");
+    breadcrumb.classList.remove("hidden");
+    vistaCursos.classList.remove("hidden");
+
+    vistaCursos.innerHTML = "";
+
+    Object.keys(MATERIALES).forEach(curso => {
+        const c = MATERIALES[curso];
+        const colorClass = {
+            blue: 'bg-blue-100',
+            green: 'bg-green-100',
+            purple: 'bg-purple-100',
+            pink: 'bg-pink-100',
+            orange: 'bg-orange-100'
+        }[c.color];
+
+        vistaCursos.innerHTML += `
+            <div onclick="abrirCurso('${curso}')" class="card cursor-pointer">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-3 ${colorClass} rounded-xl">
+                        <span class="text-4xl">${c.emoji}</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-800">${c.nombre}</h2>
+                </div>
+                <p class="text-gray-600 text-sm mb-3">Material educativo disponible</p>
+                <div class="flex items-center text-sm text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                        <path d="M20 7h-9"/><path d="M14 17H5"/>
+                        <circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>
+                    </svg>
+                    1 semana disponible
+                </div>
+            </div>`;
+    });
+
+    breadcrumb.innerHTML = `
+        <a href="#" onclick="volverInicio(event)" class="hover:underline">🏠 Inicio</a>
+        <span class="text-white/50">›</span>
+        <span>📚 Cursos</span>
+    `;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function abrirCurso(curso) {
+    cursoActual = curso;
+
+    vistaCursos.classList.add("hidden");
+    vistaSemanas.classList.remove("hidden");
+
+    listaSemanas.innerHTML = "";
+
+    const semanas = MATERIALES[curso].semanas;
+
+    Object.keys(semanas).forEach(semana => {
+        listaSemanas.innerHTML += `
+            <div onclick="abrirSemana('${semana}')" class="card cursor-pointer">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="bg-indigo-100 p-3 rounded-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" class="text-indigo-600">
+                            <path d="M20 7h-9"/><path d="M14 17H5"/>
+                            <circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">${semana}</h3>
+                    </div>
+                </div>
+                <p class="text-gray-600 mb-3">${semanas[semana].nombre}</p>
+                <div class="flex items-center text-sm text-indigo-600 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    Ver Material PDF
+                </div>
+            </div>
+        `;
+    });
+
+    breadcrumb.innerHTML = `
+        <a href="#" onclick="volverInicio(event)" class="hover:underline">🏠 Inicio</a>
+        <span class="text-white/50">›</span>
+        <a href="#" onclick="volverACursos(event)" class="hover:underline">📚 Cursos</a>
+        <span class="text-white/50">›</span>
+        <span>${MATERIALES[curso].emoji} ${MATERIALES[curso].nombre}</span>
+    `;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function abrirSemana(semana) {
+    semanaActual = semana;
+
+    vistaSemanas.classList.add("hidden");
+    vistaPDF.classList.remove("hidden");
+
+    const material = MATERIALES[cursoActual].semanas[semana];
+    tituloPDF.textContent = material.nombre;
+    pdfViewer.src = material.archivo;
+
+    breadcrumb.innerHTML = `
+        <a href="#" onclick="volverInicio(event)" class="hover:underline">🏠 Inicio</a>
+        <span class="text-white/50">›</span>
+        <a href="#" onclick="volverACursos(event)" class="hover:underline">📚 Cursos</a>
+        <span class="text-white/50">›</span>
+        <a href="#" onclick="volverASemanas(event)" class="hover:underline">${MATERIALES[cursoActual].emoji} ${MATERIALES[cursoActual].nombre}</a>
+        <span class="text-white/50">›</span>
+        <span>${semana}</span>
+    `;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function volverInicio(e) {
+    if (e) e.preventDefault();
+    vistaPDF.classList.add("hidden");
+    vistaSemanas.classList.add("hidden");
+    vistaCursos.classList.add("hidden");
+    breadcrumb.classList.add("hidden");
+    mainDashboard.classList.remove("hidden");
+
+    cursoActual = null;
+    semanaActual = null;
+    pdfViewer.src = "";
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function volverACursos(e) {
+    if (e) e.preventDefault();
+    vistaPDF.classList.add("hidden");
+    vistaSemanas.classList.add("hidden");
+    vistaCursos.classList.remove("hidden");
+
+    cursoActual = null;
+    semanaActual = null;
+    pdfViewer.src = "";
+
+    breadcrumb.innerHTML = `
+        <a href="#" onclick="volverInicio(event)" class="hover:underline">🏠 Inicio</a>
+        <span class="text-white/50">›</span>
+        <span>📚 Cursos</span>
+    `;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function volverASemanas(e) {
+    if (e) e.preventDefault();
+    vistaPDF.classList.add("hidden");
+    vistaSemanas.classList.remove("hidden");
+
+    semanaActual = null;
+    pdfViewer.src = "";
+
+    breadcrumb.innerHTML = `
+        <a href="#" onclick="volverInicio(event)" class="hover:underline">🏠 Inicio</a>
+        <span class="text-white/50">›</span>
+        <a href="#" onclick="volverACursos(event)" class="hover:underline">📚 Cursos</a>
+        <span class="text-white/50">›</span>
+        <span>${MATERIALES[cursoActual].emoji} ${MATERIALES[cursoActual].nombre}</span>
+    `;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+</script>
+
+</body>
+</html>

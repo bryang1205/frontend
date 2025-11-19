@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - PrepIA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Marked.js para renderizar Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- KaTeX para fórmulas matemáticas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Scrollbar */
+        #chat-messages::-webkit-scrollbar { width: 6px; }
+        #chat-messages::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        #chat-messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        #chat-messages::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        /* Estilos para el contenido del chat */
+        .message-content {
+            line-height: 1.7;
+        }
+        
+        .message-content h1 { font-size: 1.5rem; font-weight: bold; margin: 1rem 0; }
+        .message-content h2 { font-size: 1.3rem; font-weight: bold; margin: 0.875rem 0; }
+        .message-content h3 { font-size: 1.1rem; font-weight: 600; margin: 0.75rem 0; }
+        
+        .message-content p { margin: 0.75rem 0; }
+        
+        .message-content ul, .message-content ol {
+            margin: 0.75rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .message-content li {
+            margin: 0.5rem 0;
+        }
+        
+        .message-content code {
+            background-color: #f3f4f6;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .message-content pre {
+            background-color: #1f2937;
+            color: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 0.75rem 0;
+        }
+        
+        .message-content pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+        }
+        
+        .message-content strong {
+            font-weight: 600;
+            color: #4f46e5;
+        }
+        
+        .message-content em {
+            font-style: italic;
+            color: #6366f1;
+        }
+
+        .message-content blockquote {
+            border-left: 4px solid #6366f1;
+            padding-left: 1rem;
+            margin: 0.75rem 0;
+            color: #4b5563;
+            font-style: italic;
+        }
+
+        /* Estilos para fórmulas matemáticas */
+        .katex { font-size: 1.1em; }
+        
+        .katex-display {
+            margin: 1rem 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        /* Paso a paso */
+        .step-container {
+            background-color: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin: 0.75rem 0;
+            border-radius: 0.5rem;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Animación de escritura */
+        @keyframes typing {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        .typing-indicator {
+            animation: typing 1.5s infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-700 via-purple-600 to-pink-600 text-white">
+
+    <div id="loadingScreen" class="min-h-screen flex items-center justify-center">
+        <p class="text-xl font-semibold text-white/80">Cargando...</p>
+    </div>
+
+    <div id="chatApp" class="min-h-screen flex flex-col items-center justify-center p-4 hidden">
+        
+        <!-- Tarjeta de Chat -->
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden">
+            
+            <!-- Header del Chat -->
+            <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 flex justify-between items-center shadow-lg">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white/20 backdrop-blur-sm p-2 rounded-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2a10 10 0 0 0-7.5 16.65l.5.85H19l.5-.85A10 10 0 0 0 12 2Z"/>
+                            <path d="M12 2v20"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 id="welcomeTitle" class="text-lg font-bold">Chat con PrepIA</h1>
+                        <p class="text-xs text-white/80">Tu tutor inteligente de IA</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="dashboard.html" class="text-sm text-white/90 hover:text-white transition font-medium px-3 py-2 hover:bg-white/10 rounded-lg">
+                        ← Dashboard
+                    </a>
+                    <button id="logoutButton" class="text-sm text-white/90 hover:text-white transition font-medium px-3 py-2 hover:bg-white/10 rounded-lg">
+                        Cerrar Sesión
+                    </button>
+                </div>
+            </header>
+
+            <!-- Área de Mensajes -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
+                <!-- Mensaje inicial -->
+                <div class="flex justify-start">
+                    <div class="bg-white text-gray-800 p-4 rounded-2xl max-w-2xl shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-3">
+                            <div class="bg-indigo-100 p-2 rounded-lg flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-indigo-600">
+                                    <path d="M12 2a10 10 0 0 0-7.5 16.65l.5.85H19l.5-.85A10 10 0 0 0 12 2Z"/>
+                                </svg>
+                            </div>
+                            <div class="message-content">
+                                <p><strong>¡Hola! 👋</strong> Soy tu tutor de IA PrepIA.</p>
+                                <p>Puedo ayudarte con:</p>
+                                <ul style="list-style-type: disc;">
+                                    <li>📐 Resolver problemas matemáticos paso a paso</li>
+                                    <li>🧪 Explicar conceptos de ciencias</li>
+                                    <li>📚 Prepararte para el examen de admisión</li>
+                                    <li>💡 Responder cualquier duda académica</li>
+                                </ul>
+                                <p><em>¿En qué tema necesitas ayuda hoy?</em></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input de Mensaje -->
+            <footer class="p-4 bg-white border-t border-gray-200">
+                <form id="messageForm" class="flex gap-3">
+                    <input
+                        type="text"
+                        id="message-input"
+                        placeholder="Escribe tu pregunta aquí... (Ej: explica las potencias)"
+                        class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-indigo-500 text-gray-900"
+                        required
+                    />
+                    <button type="submit" id="send-button" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold px-6 py-3 rounded-xl hover:shadow-lg transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Enviar
+                    </button>
+                </form>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        const loadingScreen = document.getElementById('loadingScreen');
+        const chatApp = document.getElementById('chatApp');
+        const welcomeTitle = document.getElementById('welcomeTitle');
+        const logoutButton = document.getElementById('logoutButton');
+        const chatMessages = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message-input');
+        const messageForm = document.getElementById('messageForm');
+        const sendButton = document.getElementById('send-button');
+
+        let USER_ID = null;
+        let USER_NAME = null;
+
+        // Configurar marked.js para mejor renderizado
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            headerIds: false,
+            mangle: false
+        });
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            USER_ID = localStorage.getItem('prepIA_userID');
+            USER_NAME = localStorage.getItem('prepIA_userName');
+
+            if (!USER_ID || !USER_NAME) {
+                console.warn("No se encontró usuario. Redirigiendo a registro.");
+                window.location.href = './register.html'; 
+            } else {
+                console.log(`Usuario encontrado: ${USER_NAME} (${USER_ID})`);
+                welcomeTitle.textContent = `Chat con ${USER_NAME.split(' ')[0]}`; 
+                loadingScreen.classList.add('hidden');
+                chatApp.classList.remove('hidden');
+            }
+        });
+
+        // Cerrar sesión
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('prepIA_userID');
+            localStorage.removeItem('prepIA_userName');
+            window.location.href = './index.html';
+        });
+
+        // Función para formatear texto
+        function formatMessage(text) {
+            // Primero, detectar y proteger fórmulas matemáticas
+            let formattedText = text;
+            
+            // Convertir fórmulas en línea: $$formula$$ o \(formula\)
+            formattedText = formattedText.replace(/\$\$([^\$]+)\$\$/g, '\\[$1\\]');
+            formattedText = formattedText.replace(/\\\(([^\)]+)\\\)/g, '\\($1\\)');
+            
+            // Detectar pasos numerados y darles formato especial
+            formattedText = formattedText.replace(/\*\*Paso (\d+):\*\*([^\n]+)/g, 
+                '<div class="step-container"><div class="step-title">📍 Paso $1:</div><div>$2</div></div>');
+            
+            // Detectar emojis comunes en explicaciones
+            formattedText = formattedText.replace(/⚠️/g, '<span style="color: #f59e0b;">⚠️</span>');
+            formattedText = formattedText.replace(/✅/g, '<span style="color: #10b981;">✅</span>');
+            formattedText = formattedText.replace(/❌/g, '<span style="color: #ef4444;">❌</span>');
+            
+            return formattedText;
+        }
+
+        // Función para renderizar matemáticas
+        function renderMath(element) {
+            try {
+                renderMathInElement(element, {
+                    delimiters: [
+                        {left: '\\[', right: '\\]', display: true},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false,
+                    trust: true
+                });
+            } catch (e) {
+                console.error('Error rendering math:', e);
+            }
+        }
+
+        // Función mejorada para agregar mensajes
+        const addMessage = (sender, text) => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('flex');
+            
+            if (sender === 'user') {
+                messageElement.classList.add('justify-end');
+                messageElement.innerHTML = `
+                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 rounded-2xl max-w-2xl shadow-lg">
+                        <p class="text-sm leading-relaxed">${text}</p>
+                    </div>
+                `;
+            } else if (sender === 'loading') {
+                messageElement.classList.add('justify-start');
+                messageElement.id = 'loading-bubble';
+                messageElement.innerHTML = `
+                    <div class="bg-white text-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-indigo-100 p-2 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-indigo-600 typing-indicator">
+                                    <path d="M12 2a10 10 0 0 0-7.5 16.65l.5.85H19l.5-.85A10 10 0 0 0 12 2Z"/>
+                                </svg>
+                            </div>
+                            <p class="text-sm font-medium italic text-gray-600">PrepIA está pensando...</p>
+                        </div>
+                    </div>
+                `;
+            } else { // 'ai'
+                messageElement.classList.add('justify-start');
+                
+                // Formatear el texto
+                const formattedText = formatMessage(text);
+                
+                // Convertir markdown a HTML
+                const htmlContent = marked.parse(formattedText);
+                
+                messageElement.innerHTML = `
+                    <div class="bg-white text-gray-800 p-4 rounded-2xl max-w-2xl shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-3">
+                            <div class="bg-indigo-100 p-2 rounded-lg flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-indigo-600">
+                                    <path d="M12 2a10 10 0 0 0-7.5 16.65l.5.85H19l.5-.85A10 10 0 0 0 12 2Z"/>
+                                </svg>
+                            </div>
+                            <div class="message-content flex-1">${htmlContent}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Renderizar matemáticas si es un mensaje de IA
+            if (sender === 'ai') {
+                const messageContent = messageElement.querySelector('.message-content');
+                if (messageContent) {
+                    renderMath(messageContent);
+                }
+            }
+        };
+
+        // API Chat
+        const API_CHAT_URL = 'https://mi-plataforma-ia-2.onrender.com/api/ai/chat';
+
+        const handleSendMessage = async (event) => {
+            event.preventDefault();
+            
+            const messageText = messageInput.value.trim();
+            if (!messageText) return;
+            
+            if (!USER_ID) {
+                alert("Error de sesión. Por favor, inicia sesión de nuevo.");
+                window.location.href = './login.html';
+                return;
+            }
+
+            // Deshabilitar envío
+            sendButton.disabled = true;
+            messageInput.disabled = true;
+
+            // Agregar mensaje del usuario
+            addMessage('user', messageText);
+            messageInput.value = '';
+
+            // Mostrar indicador de carga
+            addMessage('loading', '');
+
+            try {
+                const requestData = {
+                    userId: USER_ID,
+                    message: messageText
+                };
+
+                const response = await fetch(API_CHAT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta de la API');
+                }
+
+                const data = await response.json();
+                
+                // Remover el indicador de carga
+                const loadingBubble = document.getElementById('loading-bubble');
+                if (loadingBubble) {
+                    loadingBubble.remove();
+                }
+                
+                // Agregar respuesta de la IA con formato mejorado
+                addMessage('ai', data.message);
+
+            } catch (error) {
+                console.error('Error al enviar mensaje:', error);
+                
+                const loadingBubble = document.getElementById('loading-bubble');
+                if (loadingBubble) {
+                    loadingBubble.remove();
+                }
+                
+                addMessage('ai', '❌ Lo siento, tuve un problema para conectarme. Por favor, intenta de nuevo.');
+            } finally {
+                // Rehabilitar envío
+                sendButton.disabled = false;
+                messageInput.disabled = false;
+                messageInput.focus();
+            }
+        };
+
+        messageForm.addEventListener('submit', handleSendMessage);
+    </script>
+</body>
+</html>
