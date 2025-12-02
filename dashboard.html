@@ -233,7 +233,7 @@
                             </div>
                             <div class="text-left">
                                 <h2 class="text-2xl font-bold text-gray-800 mb-1">📚 Cursos para Aprender</h2>
-                                <p class="text-gray-600">Accede a materiales PDF organizados por cursos y semanas</p>
+                                <p class="text-gray-600">Accede a materiales PDF organizados por temas</p>
                             </div>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
@@ -254,24 +254,27 @@
             </svg>
         </div>
 
+        <!-- Vista de cursos (ahora solo Matemática) -->
         <div id="vistaCursos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden fade-in"></div>
 
-        <div id="vistaSemanas" class="hidden fade-in">
+        <!-- Vista de temas de Matemática -->
+        <div id="vistaTemas" class="hidden fade-in">
             <button onclick="volverACursos()" class="mb-6 px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-xl font-medium transition flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="15 18 9 12 15 6"/>
                 </svg>
                 Volver a Cursos
             </button>
-            <div id="listaSemanas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div id="listaTemas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
 
+        <!-- Vista PDF -->
         <div id="vistaPDF" class="hidden fade-in">
-            <button onclick="volverASemanas()" class="mb-6 px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-xl font-medium transition flex items-center gap-2">
+            <button onclick="volverATemas()" class="mb-6 px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-xl font-medium transition flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="15 18 9 12 15 6"/>
                 </svg>
-                Volver a Semanas
+                Volver a Temas
             </button>
 
             <div class="bg-white rounded-2xl shadow-2xl p-6">
@@ -318,16 +321,206 @@ logoutBtn.onclick = () => {
 
 /* ------------------ BIBLIOTECA ------------------ */
 
+/*
+   Estructura:
+   - Un solo curso general: Matemática
+   - Dentro: temas de Matemática (carpetas)
+*/
 const MATERIALES = {
-    algebra:{nombre:"Álgebra",emoji:"🔢",color:"blue",semanas:{"Semana 1":{nombre:"ÁLGEBRA S1",archivo:"ALGEBRA S1.pdf"}}},
-    fisica:{nombre:"Física",emoji:"⚡",color:"green",semanas:{"Semana 1":{nombre:"FÍSICA S1",archivo:"FISICA S1.pdf"}}},
-    geometria:{nombre:"Geometría",emoji:"📐",color:"purple",semanas:{"Semana 1":{nombre:"GEOMETRIA S1",archivo:"GEOMETRIA S1.pdf"}}},
-    trigonometria:{nombre:"Trigonometría",emoji:"📊",color:"pink",semanas:{"Semana 1":{nombre:"TRIGO S1",archivo:"TRIGO S1.pdf"}}},
-    razmat:{nombre:"Raz. Matemático",emoji:"🧮",color:"orange",semanas:{"Semana 1":{nombre:"RAZ MAT S1",archivo:"RAZ MAT S1.pdf"}}},
+    matematica: {
+        nombre: "Matemática",
+        emoji: "📘",
+        color: "blue",
+        temas: {
+            divisivilidad: {
+                titulo: "DIVISIVILIDAD",
+                archivo: "DIVISIVILIDAD.pdf"
+            },
+            expresiones_algebraicas: {
+                titulo: "EXPRESIONES ALGEBRAICAS",
+                archivo: "EXPRESIONES ALGEBRAICAS.pdf"
+            },
+            logica_preposiciones: {
+                titulo: "LOGICA Y PREPOSICIONES",
+                archivo: "LOGICA Y PREPOSICIONES.pdf"
+            },
+            magnitudes_proporcionales: {
+                titulo: "MAGNITUDES PROPORCIONALES",
+                archivo: "MAGNITUDES PROPORCIONALES.pdf"
+            },
+            numeros_reales: {
+                titulo: "NUMEROS REALES",
+                archivo: "NUMEROS REALES.pdf"
+            },
+            operaciones_expresiones: {
+                titulo: "OPERACIONES CON EXPRESIONES ALGEBRAICAS",
+                archivo: "OPERACIONES CON EXPRESIONES ALGEBRAICAS.pdf"
+            },
+            productos_cocientes_notables: {
+                titulo: "PRODUCTOS Y COCIENTES NOTABLES",
+                archivo: "PRODUCTOS Y COCIENTES NOTABLES.pdf"
+            },
+            reglas_interes: {
+                titulo: "REGLAS DE INTERES",
+                archivo: "REGLAS DE INTERES.pdf"
+            },
+            sistemas_numeracion: {
+                titulo: "SISTEMAS DE NUMERACION",
+                archivo: "SISTEMAS DE NUMERACION.pdf"
+            },
+            teoria_conjuntos: {
+                titulo: "TEORÍA DE CONJUNTOS",
+                archivo: "TEORÍA DE CONJUNTOS.pdf"
+            }
+        }
+    },
+
+    biologia: {
+        nombre: "Biología",
+        emoji: "🧬",
+        color: "green",
+        temas: {
+            biologia_origen: {
+                titulo: "BIOLOGIA ORIGEN",
+                archivo: "BIOLOGIA ORIGEN.pdf"
+            },
+            ecologia_biodiversidad: {
+                titulo: "ECOLOGIA Y BIODIVERSIDAD",
+                archivo: "ECOLOGIA Y BIODIVERSIDAD.pdf"
+            },
+            funcion_reproduccion: {
+                titulo: "FUNCION DE REPRODUCCION",
+                archivo: "FUNCION DE REPRODUCCION.pdf"
+            },
+            funciones_biologicas: {
+                titulo: "FUNCIONES BIOLOGICAS",
+                archivo: "FUNCIONES BIOLOGICAS.pdf"
+            },
+            herencia_biologica: {
+                titulo: "HERENCIA BIOLOGICA",
+                archivo: "HERENCIA BIOLOGICA.pdf"
+            },
+            materia: {
+                titulo: "MATERIA",
+                archivo: "MATERIA.pdf"
+            }
+        }
+    },
+    quimica: {nombre: "Química",emoji: "⚗️",color: "purple",
+        temas: {
+            enlace_quimico: {
+                titulo: "ENLACE QUIMICO",
+                archivo: "ENLACE QUIMICO.pdf"
+            },
+            equilibrio_quimico: {
+                titulo: "EQUILIBRIO QUIMICO",
+                archivo: "EQUILIBRIO QUIMICO.pdf"
+            },
+            estequiometria: {
+                titulo: "ESTEQUIOMETRIA",
+                archivo: "ESTEQUIOMETRIA.pdf"
+            },
+            numeros_cuanticos_configuracion: {
+                titulo: "NUMEROS CUANTICOS Y CONFIGURACION ELECTRONICA",
+                archivo: "NUMEROS CUANTICOS Y CONFIGURACION ELECTRONICA.pdf"
+            },
+            quimica_nuclear: {
+                titulo: "QUIMICA NUCLEAR",
+                archivo: "QUIMICA NUCLEAR.pdf"
+            },
+            quimica_organica: {
+                titulo: "QUIMICA ORGANICA",
+                archivo: "QUIMICA ORGANICA.pdf"
+            },
+            reacciones_quimicas: {
+                titulo: "REACCIONES QUIMICAS",
+                archivo: "REACCIONES QUIMICAS.pdf"
+            },
+            unidades_quimicas_masa: {
+                titulo: "UNIDADES QUIMICAS DE MASA",
+                archivo: "UNIDADES QUIMICAS DE MASA.pdf"
+            }
+        }
+    },
+    fisica: {
+        nombre: "Física",
+        emoji: "⚡",
+        color: "orange",
+        temas: {
+            analisis_vectorial: {
+                titulo: "ANALISIS VECTORIAL",
+                archivo: "ANALISIS VECTORIAL.pdf"
+            },
+            cargas_circuitos: {
+                titulo: "CARGAS Y CIRCUITOS",
+                archivo: "CARGAS Y CIRCUITOS.pdf"
+            },
+            mecanica_fluidos: {
+                titulo: "MECANICA DE FLUIDOS",
+                archivo: "MECANICA DE FLUIDOS.pdf"
+            },
+            movimiento_vertical: {
+                titulo: "MOVIMIENTO VERTICAL",
+                archivo: "MOVIMIENTO VERTICAL.pdf"
+            },
+            mru: {
+                titulo: "MRU",
+                archivo: "MRU.pdf"
+            },
+            mruv: {
+                titulo: "MRUV",
+                archivo: "MRUV.pdf"
+            },
+            primera_ley_newton: {
+                titulo: "PRIMERA LEY DE NEWTON",
+                archivo: "PRIMERA LEY DE NEWTON.pdf"
+            },
+            segunda_ley_newton: {
+                titulo: "SEGUNDA LEY DE NEWTON",
+                archivo: "SEGUNDA LEY DE NEWTON.pdf"
+            },
+            trabajo_potencia_mecanica: {
+                titulo: "TRABAJO Y POTENCIA MECANICA",
+                archivo: "TRABAJO Y POTENCIA MECANICA.pdf"
+            }
+        }
+    },
+    comunicologia: {
+        nombre: "Comunicología",
+        emoji: "📝",
+        color: "pink",
+        temas: {
+            comunicacion_humana: {
+                titulo: "LA COMUNICACION HUMANA",
+                archivo: "LA COMUNICACION HUMANA.pdf"
+            },
+            oracion_tipos: {
+                titulo: "LA ORACION Y SUS TIPOS",
+                archivo: "LA ORACION Y SUS TIPOS.pdf"
+            },
+            oraciones_incompletas: {
+                titulo: "ORACIONES INCOMPLETAS",
+                archivo: "ORACIONES INCOMPLETAS.pdf"
+            },
+            ortografia: {
+                titulo: "ORTOGRAFÍA",
+                archivo: "ORTOGRAFÍA.pdf"
+            },
+            signos_puntuacion: {
+                titulo: "SIGNOS DE PUNTUACION",
+                archivo: "SIGNOS DE PUNTUACION.pdf"
+            },
+            tipos_texto: {
+                titulo: "TIPOS DE TEXTO",
+                archivo: "TIPOS DE TEXTO.pdf"
+            }
+        }
+    }
+
 };
 
 let cursoActual = null;
-let semanaActual = null;
+let temaActual  = null;
 
 function mostrarBiblioteca() {
     mainDashboard.classList.add("hidden");
@@ -346,6 +539,8 @@ function mostrarBiblioteca() {
             orange: 'bg-orange-100'
         }[c.color];
 
+        const totalTemas = Object.keys(c.temas).length;
+
         vistaCursos.innerHTML += `
             <div onclick="abrirCurso('${curso}')" class="card cursor-pointer">
                 <div class="flex items-center gap-3 mb-4">
@@ -360,7 +555,7 @@ function mostrarBiblioteca() {
                         <path d="M20 7h-9"/><path d="M14 17H5"/>
                         <circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>
                     </svg>
-                    1 semana disponible
+                    ${totalTemas} temas disponibles
                 </div>
             </div>`;
     });
@@ -378,15 +573,16 @@ function abrirCurso(curso) {
     cursoActual = curso;
 
     vistaCursos.classList.add("hidden");
-    vistaSemanas.classList.remove("hidden");
+    vistaTemas.classList.remove("hidden");
 
-    listaSemanas.innerHTML = "";
+    listaTemas.innerHTML = "";
 
-    const semanas = MATERIALES[curso].semanas;
+    const temas = MATERIALES[curso].temas;
 
-    Object.keys(semanas).forEach(semana => {
-        listaSemanas.innerHTML += `
-            <div onclick="abrirSemana('${semana}')" class="card cursor-pointer">
+    Object.keys(temas).forEach(claveTema => {
+        const tema = temas[claveTema];
+        listaTemas.innerHTML += `
+            <div onclick="abrirTema('${claveTema}')" class="card cursor-pointer">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="bg-indigo-100 p-3 rounded-xl">
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" class="text-indigo-600">
@@ -395,10 +591,10 @@ function abrirCurso(curso) {
                         </svg>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold text-gray-800">${semana}</h3>
+                        <h3 class="text-xl font-bold text-gray-800">${tema.titulo}</h3>
                     </div>
                 </div>
-                <p class="text-gray-600 mb-3">${semanas[semana].nombre}</p>
+                <p class="text-gray-600 mb-3">PDF del tema</p>
                 <div class="flex items-center text-sm text-indigo-600 font-medium">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="mr-1">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -421,14 +617,14 @@ function abrirCurso(curso) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function abrirSemana(semana) {
-    semanaActual = semana;
+function abrirTema(claveTema) {
+    temaActual = claveTema;
 
-    vistaSemanas.classList.add("hidden");
+    vistaTemas.classList.add("hidden");
     vistaPDF.classList.remove("hidden");
 
-    const material = MATERIALES[cursoActual].semanas[semana];
-    tituloPDF.textContent = material.nombre;
+    const material = MATERIALES[cursoActual].temas[claveTema];
+    tituloPDF.textContent = material.titulo;
     pdfViewer.src = material.archivo;
 
     breadcrumb.innerHTML = `
@@ -436,9 +632,9 @@ function abrirSemana(semana) {
         <span class="text-white/50">›</span>
         <a href="#" onclick="volverACursos(event)" class="hover:underline">📚 Cursos</a>
         <span class="text-white/50">›</span>
-        <a href="#" onclick="volverASemanas(event)" class="hover:underline">${MATERIALES[cursoActual].emoji} ${MATERIALES[cursoActual].nombre}</a>
+        <a href="#" onclick="volverATemas(event)" class="hover:underline">${MATERIALES[cursoActual].emoji} ${MATERIALES[cursoActual].nombre}</a>
         <span class="text-white/50">›</span>
-        <span>${semana}</span>
+        <span>${material.titulo}</span>
     `;
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -447,13 +643,13 @@ function abrirSemana(semana) {
 function volverInicio(e) {
     if (e) e.preventDefault();
     vistaPDF.classList.add("hidden");
-    vistaSemanas.classList.add("hidden");
+    vistaTemas.classList.add("hidden");
     vistaCursos.classList.add("hidden");
     breadcrumb.classList.add("hidden");
     mainDashboard.classList.remove("hidden");
 
     cursoActual = null;
-    semanaActual = null;
+    temaActual = null;
     pdfViewer.src = "";
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -462,11 +658,10 @@ function volverInicio(e) {
 function volverACursos(e) {
     if (e) e.preventDefault();
     vistaPDF.classList.add("hidden");
-    vistaSemanas.classList.add("hidden");
+    vistaTemas.classList.add("hidden");
     vistaCursos.classList.remove("hidden");
 
-    cursoActual = null;
-    semanaActual = null;
+    temaActual = null;
     pdfViewer.src = "";
 
     breadcrumb.innerHTML = `
@@ -478,12 +673,12 @@ function volverACursos(e) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function volverASemanas(e) {
+function volverATemas(e) {
     if (e) e.preventDefault();
     vistaPDF.classList.add("hidden");
-    vistaSemanas.classList.remove("hidden");
+    vistaTemas.classList.remove("hidden");
 
-    semanaActual = null;
+    temaActual = null;
     pdfViewer.src = "";
 
     breadcrumb.innerHTML = `
@@ -496,7 +691,6 @@ function volverASemanas(e) {
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
 </script>
 
 </body>
