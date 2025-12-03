@@ -78,11 +78,24 @@
 
         <div id="resultsScreen" class="hidden flex-1 bg-white rounded-2xl shadow-lg p-8 text-center max-w-3xl mx-auto mt-10">
             <h2 class="text-3xl font-bold text-gray-900 mb-6">Resultados</h2>
-            <div class="grid grid-cols-3 gap-6 mb-8">
-                <div class="bg-blue-50 p-6 rounded-2xl"><p class="text-blue-600 font-medium">Puntaje</p><p id="totalScore" class="text-4xl font-bold text-blue-700">0</p></div>
-                <div class="bg-green-50 p-6 rounded-2xl"><p class="text-green-600 font-medium">Aciertos</p><p id="totalCorrect" class="text-4xl font-bold text-green-700">0</p></div>
-                <div class="bg-red-50 p-6 rounded-2xl"><p class="text-red-600 font-medium">Errores</p><p id="totalIncorrect" class="text-4xl font-bold text-red-700">0</p></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-blue-50 p-6 rounded-2xl">
+                    <p class="text-blue-600 font-medium">Puntaje Final</p>
+                    <p id="totalScore" class="text-4xl font-bold text-blue-700">0</p>
+                    <p class="text-xs text-blue-500 mt-1">Máx. 400 pts</p>
+                </div>
+                <div class="bg-green-50 p-6 rounded-2xl">
+                    <p class="text-green-600 font-medium">Conocimientos (70%)</p>
+                    <p id="knowledgeScore" class="text-4xl font-bold text-green-700">0</p>
+                </div>
+                <div class="bg-purple-50 p-6 rounded-2xl">
+                    <p class="text-purple-600 font-medium">Aptitud (30%)</p>
+                    <p id="aptitudeScore" class="text-4xl font-bold text-purple-700">0</p>
+                </div>
             </div>
+            <p class="text-sm text-gray-600 mb-6">
+                Aciertos: <span id="totalCorrect">0</span> · Errores: <span id="totalIncorrect">0</span>
+            </p>
             <button onclick="location.reload()" class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition">Volver a intentar</button>
         </div>
     </div>
@@ -95,6 +108,20 @@
         let timerInterval;
         let timeLeft = 180 * 60;
         const API_EXAM_URL = 'https://mi-plataforma-ia-2.onrender.com/api/ai/generate-exam';
+
+        // Categorías consideradas como APTITUD
+        const APTITUDE_CATEGORIES = [
+            'Comunicación',
+            'Lenguaje',
+            'Literatura',
+            'Inglés',
+            'Lógica',
+            'Matemática'
+        ];
+
+        function isAptitudeQuestion(q) {
+            return APTITUDE_CATEGORIES.some(cat => q.category && q.category.startsWith(cat));
+        }
 
         // 2. Funciones
         async function startExam() {
@@ -388,15 +415,60 @@
             document.querySelector('header').classList.add('hidden');
             document.getElementById('resultsScreen').classList.remove('hidden');
             
-            let correct=0, incorrect=0;
+            let correct = 0, incorrect = 0;
+            let knowCorrect = 0, knowIncorrect = 0;
+            let aptCorrect = 0, aptIncorrect = 0;
+
             examQuestions.forEach((q, i) => {
-                if(userAnswers[i] === q.correct) correct++;
-                else if(userAnswers[i] !== null) incorrect++;
+                const ans = userAnswers[i];
+                const isApt = isAptitudeQuestion(q);
+
+                if (ans === q.correct) {
+                    correct++;
+                    if (isApt) aptCorrect++; else knowCorrect++;
+                } else if (ans !== null) {
+                    incorrect++;
+                    if (isApt) aptIncorrect++; else knowIncorrect++;
+                }
             });
-            
-            const score = Math.max(0, (correct*4) - incorrect);
-            document.getElementById('totalScore').textContent = score;
-            document.getElementById('totalCorrect').textContent = correct;
+
+            const POINTS_PER_CORRECT = 4;
+            const PENALTY_INCORRECT = 1;
+
+            // Conteos de preguntas por tipo
+            const totalAptQuestions = examQuestions.filter(isAptitudeQuestion).length;
+            const totalKnowQuestions = examQuestions.length - totalAptQuestions;
+
+            // Puntajes crudos (no negativos)
+            let rawKnow = POINTS_PER_CORRECT * knowCorrect - PENALTY_INCORRECT * knowIncorrect;
+            let rawApt  = POINTS_PER_CORRECT * aptCorrect  - PENALTY_INCORRECT * aptIncorrect;
+
+            rawKnow = Math.max(0, rawKnow);
+            rawApt  = Math.max(0, rawApt);
+
+            const maxKnow = POINTS_PER_CORRECT * totalKnowQuestions;
+            const maxApt  = POINTS_PER_CORRECT * totalAptQuestions;
+
+            const knowRatio = maxKnow > 0 ? (rawKnow / maxKnow) : 0;
+            const aptRatio  = maxApt  > 0 ? (rawApt  / maxApt)  : 0;
+
+            const maxTotal = POINTS_PER_CORRECT * examQuestions.length; // 400 pts
+
+            // Peso: 70% conocimientos, 30% aptitud
+            const weightedKnow = knowRatio * 0.7 * maxTotal;
+            const weightedApt  = aptRatio  * 0.3 * maxTotal;
+
+            const finalScore = Math.round(weightedKnow + weightedApt);
+
+            // Puntajes parciales mostrados (ya ponderados)
+            const knowledgeScore = Math.round(weightedKnow);
+            const aptitudeScore  = Math.round(weightedApt);
+
+            document.getElementById('totalScore').textContent     = finalScore;
+            document.getElementById('knowledgeScore').textContent = knowledgeScore;
+            document.getElementById('aptitudeScore').textContent  = aptitudeScore;
+
+            document.getElementById('totalCorrect').textContent   = correct;
             document.getElementById('totalIncorrect').textContent = incorrect;
         }
 
