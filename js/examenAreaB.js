@@ -1,9 +1,3 @@
-// =======================================================
-// ARCHIVO: examenAreaB.js
-// Contiene las variables, datos y toda la lógica del examen
-// =======================================================
-
-// 1. Variables Globales
 let examQuestions = [];
 let currentQuestionIndex = 0;
 let userAnswers = [];
@@ -11,7 +5,7 @@ let timerInterval;
 let timeLeft = 180 * 60; // 3 horas en segundos
 const API_EXAM_URL = 'https://mi-plataforma-ia-2.onrender.com/api/ai/generate-exam';
 
-// Categorías consideradas como APTITUD para el Área B/C (ajustar según tu currículo)
+// Categorías consideradas como APTITUD para el Área B/C (se mantienen, pero no se usan para el puntaje final visible)
 const APTITUDE_CATEGORIES = [
     'Comunicación',
     'Lenguaje',
@@ -313,7 +307,8 @@ function nextQuestion() {
 
 /**
  * Función para calcular y mostrar el puntaje final.
- * Regla: +4 por Acierto, -1 por Error. Permite puntajes negativos.
+ * REGLA UNT: +4 por Acierto, -1 por Error.
+ * Se elimina la distinción y ponderación por tipo de pregunta en los resultados.
  */
 function finishExam() {
     clearInterval(timerInterval);
@@ -322,47 +317,34 @@ function finishExam() {
     document.getElementById('resultsScreen').classList.remove('hidden');
     
     let correct = 0, incorrect = 0;
-    let knowCorrect = 0, knowIncorrect = 0;
-    let aptCorrect = 0, aptIncorrect = 0;
 
     examQuestions.forEach((q, i) => {
         const ans = userAnswers[i];
-        const isApt = isAptitudeQuestion(q);
 
         if (ans === q.correct) {
             correct++;
-            if (isApt) aptCorrect++; else knowCorrect++;
         } else if (ans !== null) {
             incorrect++;
-            if (isApt) aptIncorrect++; else knowIncorrect++;
         }
     });
 
     const POINTS_PER_CORRECT = 4;
     const PENALTY_INCORRECT = 1;
 
-    // --- NUEVA LÓGICA DE CÁLCULO ---
-
-    // 1. Cálculo de puntajes parciales (permite negativos)
-    // Se calcula con la fórmula lineal: (Aciertos * 4) - (Errores * 1)
-    const knowledgeScore = (knowCorrect * POINTS_PER_CORRECT) - (knowIncorrect * PENALTY_INCORRECT);
-    const aptitudeScore  = (aptCorrect  * POINTS_PER_CORRECT) - (aptIncorrect  * PENALTY_INCORRECT);
-
-    // 2. Cálculo del puntaje final (suma simple de los parciales)
-    const finalScore = knowledgeScore + aptitudeScore; 
+    // Cálculo del puntaje final: (Aciertos * 4) - (Errores * 1)
+    const finalScore = (correct * POINTS_PER_CORRECT) - (incorrect * PENALTY_INCORRECT);
     
     // NOTA: El puntaje máximo teórico sigue siendo 400.
-    // La lógica anterior de ponderación y umbral de Math.max(0, ...) ha sido ELIMINADA.
     
-    // --- FIN NUEVA LÓGICA DE CÁLCULO ---
-
-    // Actualización de los elementos en el HTML
+    // --- Actualización de los elementos en el HTML ---
+    
+    // Se elimina la actualización de knowledgeScore y aptitudeScore
     document.getElementById('totalScore').textContent     = finalScore;
-    document.getElementById('knowledgeScore').textContent = knowledgeScore;
-    document.getElementById('aptitudeScore').textContent  = aptitudeScore;
-
     document.getElementById('totalCorrect').textContent   = correct;
     document.getElementById('totalIncorrect').textContent = incorrect;
+    
+    // Como knowledgeScore y aptitudeScore ya no se usan en los cálculos, 
+    // se recomienda eliminarlos del HTML, como se muestra en la sección de abajo.
 }
 
 if(!localStorage.getItem('prepIA_userID')) window.location.href = 'login.html';
