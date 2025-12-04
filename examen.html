@@ -94,8 +94,29 @@
                 <button onclick="window.location.href='dashboard.html'" class="px-6 py-3 bg-gray-200 text-gray-800 font-bold rounded-xl hover:bg-gray-300 transition">Regresar a principal</button>
             </div>
         </div>
+
+        <div id="examSelectModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
+            <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Selecciona el Tipo de Examen</h2>
+                <div class="space-y-4">
+                    <button class="select-exam-btn w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold py-4 rounded-lg transition" data-exam-type="A">
+                        Examen Tipo A (Área A: Salud)
+                    </button>
+                    <button class="select-exam-btn w-full bg-green-50 hover:bg-green-100 text-green-700 font-semibold py-4 rounded-lg transition" data-exam-type="B">
+                        Examen Tipo B (Área B: Ciencias)
+                    </button>
+                    <button class="select-exam-btn w-full bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold py-4 rounded-lg transition" data-exam-type="C">
+                        Examen Tipo C (Área C: Ciencias de la Persona)
+                    </button>
+                    <button class="select-exam-btn w-full bg-red-50 hover:bg-red-100 text-red-700 font-semibold py-4 rounded-lg transition" data-exam-type="D">
+                        Examen Tipo D (Área D: Letras)
+                    </button>
+                </div>
+                <p class="text-xs text-gray-500 mt-4 text-center">La selección determinará las preguntas.</p>
+            </div>
+        </div>
     </div>
 
-    <script src="js/examenAreaB.js"></script>
+    <script src="js/mainExamLoader.js"></script>
 </body>
 </html>
