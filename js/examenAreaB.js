@@ -1,0 +1,368 @@
+// =======================================================
+// ARCHIVO: examenAreaB.js
+// Contiene las variables, datos y toda la lógica del examen
+// =======================================================
+
+// 1. Variables Globales
+let examQuestions = [];
+let currentQuestionIndex = 0;
+let userAnswers = [];
+let timerInterval;
+let timeLeft = 180 * 60; // 3 horas en segundos
+const API_EXAM_URL = 'https://mi-plataforma-ia-2.onrender.com/api/ai/generate-exam';
+
+// Categorías consideradas como APTITUD para el Área B/C (ajustar según tu currículo)
+const APTITUDE_CATEGORIES = [
+    'Comunicación',
+    'Lenguaje',
+    'Literatura',
+    'Inglés',
+    'Lógica',
+    'Matemática'
+];
+
+function isAptitudeQuestion(q) {
+    return APTITUDE_CATEGORIES.some(cat => q.category && q.category.startsWith(cat));
+}
+
+// 2. Funciones de Carga de Datos y Lógica
+async function startExam() {
+    const btn = document.querySelector('#introScreen button');
+    btn.disabled = true;
+    btn.innerHTML = '🤖 Generando examen... (espera)';
+    
+    try {
+        // Intentamos conectar con la IA
+        const response = await fetch(API_EXAM_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ area: "C", topics: ["Psicología", "Filosofía", "Lenguaje", "Historia", "Cívica", "Matemática", "Biología"] })
+        });
+
+        if (!response.ok) throw new Error('Error de red');
+        const data = await response.json();
+        
+        if (data.success && data.questions.length > 0) {
+            examQuestions = data.questions;
+        } else {
+            throw new Error('Datos inválidos');
+        }
+    } catch (e) {
+        console.warn("Usando modo offline por error:", e);
+        generateLocalQuestions(); // ahora usa tus 100 preguntas
+    }
+
+    setupExam();
+}
+
+// AQUÍ SE INCLUYE LA LISTA DE PREGUNTAS (Tus 100 preguntas)
+function generateLocalQuestions() {
+    examQuestions = [
+        // --- COMUNICACIÓN Y COMUNICOLOGÍA ---
+        {
+            id: 1,
+            category: "Comunicación",
+            question: "En la siguiente situación comunicativa:\nLeonor, estudiante preuniversitaria, pregunta a su profesor por el significado de la palabra \"Monopolio\" a lo que el profesor explica: \"El monopolio es una estructura de mercado en donde existe un único oferente de un cierto bien o servicio, es decir, una sola empresa domina todo el mercado de oferta\". Durante la explicación, se oye una bulla en el fondo del aula, a continuación, el docente eleva la voz y expresa enérgicamente \"Estudiantes, ¿podrían guardar silencio de una vez?\". De acuerdo con el texto leído, se logra identificar correctamente:\n1) Se presenta un ruido fisiológico que obstruye la comunicación por un momento.\n2) El código proxémico posibilita un mejor entendimiento entre los interlocutores\n3) Durante el acto comunicativo prevalecen solo las funciones metalingüística, referencial y apelativa.\n4) El paralenguaje es un código no verbal que es empleado por el docente para persuadir a los estudiantes.\n5) El proceso comunicativo entre la estudiante y su profesor corresponden al tipo de comunicación horizontal, privada y directa.\nSon respuestas correctas:",
+            options: ["1, 2, 3 y 4", "1, 2, 4 y 5", "3, 4 y 5", "Solo 1, 2 y 3", "Solo 2, 3 y 4"],
+            correct: 2
+        },
+        {id: 2, category: "Comunicación", question: "En la situación siguiente: 'En un salón de clase, los estudiantes discuten formalmente sobre las implicancias del denominado 'lenguaje inclusivo' en el empleo del idioma español'. La técnica oral que emplean es:", options: ["Arenga", "Debate", "Panel", "Sermón", "Tertulia"], correct: 1},
+        {id: 3, category: "Lenguaje", question: "En la expresión siguiente: 'Estas casuchas resultaron muy espaciosas'. El número de morfemas es:", options: ["11", "12", "14", "13", "10"], correct: 3},
+        {
+            id: 4,
+            category: "Comunicación",
+            question: "En las siguientes circunstancias en una de las aulas de Cepunt, un alumno ha colgado en la pared un letrero que dice: La amistad duplica las alegrías y divide las angustias por la mitad. Dicha frase ha sido acompañada con la caricatura de un corazón. De la situación dada se puede afirmar:\n1) El grado de iconicidad de la imagen presentada es alto.\n2) Se han utilizado únicamente signos artificiales.\n3) Uno de los signos artificiales presentados es un símbolo.\n4) El letrero colocado es una señal de que la amistad reina en el salón.\n5) En la frase empelada se ha utilizado signos naturales que reflejan sentimientos propios del ser humano.\nSon respuestas falsas:",
+            options: ["1, 2, 3", "1, 2, 4", "1, 4, 5", "2, 3, 4", "3, 4, 5"],
+            correct: 2
+        },
+        {id: 5, category: "Lenguaje", question: "En el texto siguiente: 'Sabía que rezar y orar eran dos actos diferentes que practicaban los devotos del Señor de los Milagros en el templo de aquel distrito'. El número de sustantivos es:", options: ["4", "5", "6", "7", "8"], correct: 4},
+        {id: 6, category: "Lenguaje", question: "En el texto: 'La discreción te guardará; Te preservará la inteligencia, Para librarte del mal camino, De los hombres que hablan perversidades, Que dejan los caminos derechos, Para andar por sendas tenebrosas; 'Prov.2.11-13. El sustantivo subrayado (hombres) CUMPLE CON LA FUNCIÓN DE:", options: ["Complemento directo", "Complemento indirecto", "Modificador directo", "Modificador indirecto", "Núcleo"], correct: 4},
+
+        // --- LITERATURA / ANÁLISIS DEL DISCURSO ---
+        {id: 7, category: "Literatura", question: "De la incertidumbre del protagonista (El túnel, Sábato) inferimos que el autor utiliza la técnica de:", options: ["Dato escondido", "Flash back", "Relato circular", "Salto cualitativo", "Vasos comunicantes"], correct: 4},
+        {id: 8, category: "Literatura", question: "El siguiente fragmento corresponde al poema Mío Cid, que según se sabe, refiere una historia compuesta hacia el año 1200 de nuestra era: Los vasallos de mío Cid sin piedad les daban; En una hora y un poco de lugar trescientos moros matan. Dando grandes alaridos, los que están en la celada, Dejándolos van delante, para el castillo se tornaban; Las espadas desnudas, en la puerta se paraban. Luego llegaban los suyos, pues la batalla es ganada. La forma de composición que se puede apreciar es:", options: ["Prosa épica", "Prosarelato", "Verso - Cantar de gesta", "Verso-épica", "Verso-relato"], correct: 2},
+        {id: 9, category: "Literatura", question: "El interés de Sófocles, la tragedia Edipo rey, fue echar de ver la creencia que:", options: ["El destino ya está trazado y solamente queda cumplirlo.", "La decisión favorece la construcción del destino.", "La fatalidad no es inevitable en la vida de los hombres.", "La insignificancia de lo humano frente a lo divino.", "La razón de los seres humanos se antepone al destino."], correct: 0},
+        {id: 10, category: "Comunicación", question: "Respecto al TEXTO (Organización Panamericana de la Salud): La depresión es una enfermedad común pero grave... La secuencia macroestructural del texto es:", options: ["Definición de depresión - antecedentes - riesgo genético - síntomas.", "Definición de depresión - riesgo genético - tipos de depresión - síntomas.", "Interferencia de la depresión en la vida diaria - algunas investigaciones - tipos de depresión.", "La depresión - influencia de la depresión - antecedentes - síntomas.", "La depresión - riesgo genético - tipos de depresión - duración."], correct: 0},
+        {
+            id: 11,
+            category: "Comunicación",
+            question: "Respecto a la microestructura del texto, podemos afirmar que:\n1) Según su función todos los párrafos son informativos.\n2) El primer párrafo por su función es introductorio.\n3) El segundo párrafo por su función es informativo.\n4) El tercer párrafo según su estructura es de ideas principales múltiples.\n5) El segundo párrafo es inductivo.\nLa respuesta correcta es:",
+            options: ["1, 2, 4", "1, 3, 4", "Solo 1", "Solo 1 y 3", "Solo 1 y 4"],
+            correct: 3
+        },
+        {id: 12, category: "Comunicación", question: "Con respecto a las palabras resaltadas y al mismo tiempo subrayadas en el texto (rana toro o mugidora, este anfibio, Caldas) es correcto afirmar que aluden respectivamente a:", options: ["Caldas - región cafetalera - ejemplares de rana toro.", "Ranas mugidoras - Caldas - rana", "Lugares - Caldas - rana mugidora", "Ranas - Caldas - ejemplares de la rana toro o mugidora.", "Ranas mugidoras - Estados Unidos - ejemplares de la rana toro"], correct: 1},
+        {
+            id: 13,
+            category: "Comunicación",
+            question: "Respecto a las palabras 'Del 14 al 17 de abril' y 'además' resaltadas en el texto, se puede afirmar que:\n1) La primera es un modificador de enunciado.\n2) La segunda es un conector de adición\n3) La segunda es un caso de cohesión léxica\n4) Situar la información en un tiempo determinado, con relación a la primera expresión.\n5) La segunda es un caso de cohesión gramatical.\nLa respuesta correcta es:",
+            options: ["1, 2, 3, 4", "1, 2, 4, 5", "Solo 1 y 2", "Solo 1 y 4", "Solo 1, 2, 4"],
+            correct: 1
+        },
+        {id: 14, category: "Comunicación", question: "El tema del texto (Cada estado colonial afrontó de manera distinta el proceso de disgregación de su imperio...) es:", options: ["La independización de las colonias.", "Las diversas manifestaciones de la eclosión independentista en cada país colonizado.", "Las reacciones disímiles de los países colonizadores respecto de la acción de sus colonias.", "Los países en el mundo y sus colonias.", "Los países independientes y sus colonias."], correct: 2},
+        {id: 15, category: "Comunicación", question: "Una afirmación falsa con respecto al texto (sobre la disgregación colonial) es:", options: ["España abandonó a Sahara Occidental en manos de Marruecos y Mauritania.", "España se desprendió pacíficamente de sus colonias.", "Francia trató de impedir la emancipación de sus colonias.", "La India aceptó una independencia pacífica.", "Todos los estados coloniales afrontaron de manera distinta la disgregación de su imperio."], correct: 3},
+
+        // --- INGLÉS ---
+        {id: 16, category: "Inglés", question: "Read the next dialogue and choose the CORRECT sentences. I. Mark is from California. II. Robert is from New York. III. Mark is not great today. IV. Robert is not well. V. It's the first time Robert is in California.", options: ["I - II - III", "I - II - V", "I - III - IV", "III - IV - V", "None of them"], correct: 1},
+        {id: 17, category: "Inglés", question: "Read the following paragraph and answer the question. Piura es a Peruvian región. It is a flat and hot place. An important economic activity in Piura is tourism... What is the economic activity in Piura?", options: ["It is a Peruvian region", "It is important.", "It is tourism", "It is tree important rivers", "Piura is a Peruvian region"], correct: 2},
+        {id: 18, category: "Inglés", question: "Read the text and choose the correct answer. Francisco studies San Marcos University at Lima. He lives with his brother Martin in an apartment. They like doing exercise at the gym. It is on the fourth floor every weekend.", options: ["at - in - in - on - on", "on - on - on - in - on", "at - in - in - at - on", "in - at - in - on - on", "at - in - at - in - in"], correct: 0},
+        {id: 19, category: "Inglés", question: "Hi! My name is Luana. There is a big box in the middle of my kitchen. It is not my box. I think it is my brother's box. My boxes are in the living room. Inside the blue box I can find my school supplies. In the red box, there are plastic things, finally in my green box, there are ten purses. How many boxes are there in the house?", options: ["There are five boxes.", "There are four boxes.", "There are three boxes in the living room.", "There aren't boxes in my house.", "There is one box in the kitchen."], correct: 1},
+        {id: 20, category: "Inglés", question: "Read the text and complete with the correct words. My younger sister is a very smart girl. She is also a good student and a nice daughter. We sleep together. Our bedroom is huge and clean.", options: ["He - My - Our", "He - We - your", "Her - We - his", "His - My - her", "She - We - Our"], correct: 4},
+
+        // --- MATEMÁTICA (Conjuntos) ---
+        {id: 21, category: "Matemática", question: "En un salón de clase del CEPUNT, se sabe que hay 75 alumnos; de los cuales 35 son hinchas de la 'U' y 30 de 'Alianza Lima'; además 9 son hinchas de la 'U' y 'Alianza', entonces el número de alumnos que no son hinchas de la 'U', es:", options: ["19", "21", "26", "40", "45"], correct: 3},
+        {id: 22, category: "Matemática", question: "Se realizó una encuesta a los habitantes de un distrito de Trujillo, sobre el uso de ciertos artefactos y se obtuvo que el 80% tiene televisor, el 90% tiene radio, el 60% tiene cocina a gas, 2% no tienen ninguno de los artefactos anteriores y el 55% tienen los tres artefactos. El porcentaje de los encuestados que poseen sólo uno de estos artefactos, es:", options: ["19%", "20%", "21%", "22%", "25%"], correct: 2},
+        {id: 23, category: "Matemática", question: "Un grupo de 55 alumnos, estudiantes del CEPUNT han decidido formar un círculo de estudios donde solo estudian Geografía, inglés e Historia, todos prefieren al menos uno de estos cursos, 25 prefieren Geografía, 32 prefieren inglés, 33 prefieren Historia y 5 prefieren los tres cursos. El total de estudiantes que prefieren solo dos de los cursos, es:", options: ["15", "20", "25", "30", "35"], correct: 2},
+        {id: 24, category: "Matemática", question: "De un grupo de personas que leen las revistas 'Oiga', 'caretas' o 'Gente', se sabe que la novena parte lee sólo 'Oiga', la quinta parte lee sólo 'caretas' y que la tercera parte lee exactamente dos de estas revistas, 72 leen las tres revistas. Si la cantidad de personas que leen sólo 'Gente' es igual a la diferencia entre los que leen sólo 'Caretas' y los que leen sólo 'Oiga'. ¿Cuántas personas hay en el grupo?", options: ["180", "210", "240", "270", "300"], correct: 3},
+        {id: 25, category: "Matemática", question: "De un grupo de personas, se observó que, de las 47 presentes, 29 eran hombres, de los cuales 19 no eran mayores de edad. Si 11 personas nacieron hoy y las mujeres mayores son tantas como las menores de edad, de estas, las que nacieron hoy representan el 20% del número de hombres mayores de edad. El número de hombres menores de edad no nacieron hoy, es:", options: ["8", "10", "12", "14", "16"], correct: 1},
+        {id: 26, category: "Matemática", question: "Sean los conjuntos A y B, si: n(A ∩ B) = 3, el número de subconjuntos propios de B menos A es 127 y el número de subconjuntos de A es 1024, entonces el n(A ∪ B) es:", options: ["14", "17", "18", "20", "21"], correct: 1},
+        {id: 27, category: "Matemática", question: "Julio y Magaly son profesores de Aritmética, ellos se encuentran en una reunión y Julio le pregunta a Magaly cuantos meses tiene su bebé? Y ella le responde mi bebé tiene tantos meses como la diferencia positiva entre el producto de elementos comunes y la suma de elementos no comunes que tienen los conjuntos M y P. M = {a/2 | a ∈ N ∧ 1 < a < 10}, P = {b/3 ∈ N | b < 20}.", options: ["1 mes", "2 meses", "3 meses", "4 meses", "5 meses"], correct: 0},
+        {id: 28, category: "Matemática", question: "Dado 3 conjuntos A; B y C. Si n(A) = m; n(B) = m+r; n(C) = m+2r además: n[P(A)] + n[P(B)] + n[P(C)] = 896. Se sabe además que A, B y C son disjuntos. El valor de n(A ∪ B ∪ C), es:", options: ["16", "22", "24", "32", "48"], correct: 2},
+
+        // --- MATEMÁTICA (Lógica) ---
+        {id: 29, category: "Lógica", question: "La formalización de la proposición: Si hay verdadera democracia, entonces no hay detenciones arbitrarias ni otras violaciones de los derechos civiles, es:", options: ["p ∧ (¬q ∧ r)", "p ∧ (¬q ∧ ¬r)", "p ∨ (¬q ∧ ¬r)", "p → (¬q ∧ ¬r)", "p → (¬q ∨ ¬r)"], correct: 3},
+        {
+            id: 30,
+            category: "Lógica",
+            question: "Son características de las ciencias formales:\n1) La verdad de sus enunciados se obtiene por métodos racionales.\n2) Utilizan sistemas de lenguajes formales.\n3) La verdad de sus enunciados está sujeta a demostración.\n4) Sus leyes son probables pues está sujeta al escenario que se apliquen.\n5) Su objeto de estudio es material.\nSon ciertas:",
+            options: ["1, 2, 3 y 5", "1, 2, 4 y 5", "Solo 1, 2 y 3", "Solo 1, 2 y 4", "Solo 1, 3 y 5"],
+            correct: 2
+        },
+        {id: 31, category: "Lógica", question: "El primero en dar a la lógica el nombre de Lógica Matemática, es:", options: ["Boole", "Euler", "Peano", "Russell", "Veen"], correct: 2},
+        {id: 32, category: "Lógica", question: "En una conversación discutían un par de amigos, acerca de la intensión y extensión de los conceptos: Palta - Fruto - Vegetal. Afirmamos: 1) Vegetal es la extensión de Fruto. 2) Palta es la intensión de Vegetal. 3) Fruto es la extensión de Vegetal. 4) Palta tiene más intensión que Fruto. 5) Vegetal es la intensión de Fruto. Son ciertas:", options: ["1, 2 y 3", "1, 2 y 5", "1, 4 y 5", "2, 3 y 4", "3, 4 y 5"], correct: 4},
+        {
+            id: 33,
+            category: "Lógica",
+            question: "No son proposiciones simples:\n1) Isaías y Manuel son los primeros puestos del Examen Ordinario 2023-I UNT\n2) Japón y China son las únicas potencias económicas\n3) Los osos polares y los Koalas viven en los trópicos\n4) La Lógica y la Matemática son ciencias formales\n5) La Lógica no es una ciencia eidética.\nSon ciertas, EXCEPTO:",
+            options: ["1, 3 y 5", "2, 3, 5", "3, 4 y 5", "Ninguna", "Solo 2 y 5"],
+            correct: 3
+        },
+        {id: 34, category: "Lógica", question: "Dentro del estudio de la lógica, encontramos que una de las formas del pensamiento es el concepto, del cual podemos afirmar lo siguiente: I. Son bimembres porque tienen sujeto y predicado. II. Pueden ser verdaderos y falsos. III. Son la síntesis de las características esenciales de los objetos. IV. Es la mínima forma de pensamiento. V. Es expresado lingüísticamente a través del término. Son correctas, solamente:", options: ["I, II y III", "I, II y V", "II, III y IV", "II, IV y V", "III, IV y V"], correct: 4},
+        {id: 35, category: "Lógica", question: "La proposición: 'Siempre y cuando existe investigación entonces hay descubrimiento científico. Así mismo es falso que existe investigación'. Es equivalente a:", options: ["Existe investigación, pero no hay descubrimiento científico.", "Hay descubrimiento científico salvo que existe investigación.", "No existe investigación ni hay descubrimiento científico.", "No existe investigación, pero si descubrimiento científico.", "Siempre que hay descubrimiento científico, no hay investigación."], correct: 2},
+        {
+            id: 36,
+            category: "Lógica",
+            question: "Son proposiciones lógicas:\n1) Toma una decisión rápida.\n2) ¡Dios mío!\n3) Belaunde Terry fue presidente del Perú.\n4) ¿Qué hora es?\nSon ciertas, EXCEPTO:",
+            options: ["1 y 3", "1 y 4", "1, 2 y 4", "2 y 3", "Solo 3"],
+            correct: 2
+        },
+
+        // --- MATEMÁTICA (Aritmética/Álgebra) ---
+        {id: 37, category: "Matemática", question: "Sumar a 1/4 la tercera parte de 27/4, enseguida restar de esta suma la tercera parte de 5/8, luego dividir la diferencia obtenida por el resultado de sumar a 1/5 los siete sextos de 2/3 y finalmente al cociente obtenido restarle once veces la quinta potencia de 1/2. El resultado final es:", options: ["1", "2", "3", "4", "5"], correct: 1},
+        {id: 38, category: "Matemática", question: "Un fabricante de bombillas gana 0,3 soles por cada bombilla buena que sale de la fábrica, pero pierde 0,4 soles por cada una que salga defectuosa. Un día en el que fabricó 2100 bombillas obtuvo un beneficio de 484,4 soles. Entonces la diferencia entre el número de bombillas buenas y el número de bombilla defectuosas que fabricó ese día, es:", options: ["1864 bombillas", "1684 bombillas", "1468 bombillas", "1662 bombillas", "1478 bombillas"], correct: 1},
+        {id: 39, category: "Matemática", question: "Roberto tiene $x^{x^2 - 12}$ soles y al comprar 12 pulseras a $x^{x^2 - 14}$ soles cada una, le sobra $x^{x-1}$ soles. ¿Cuánto dinero tenía Roberto antes de la compra?", options: ["S/ 526", "S/ 652", "S/ 254", "S/ 246", "S/ 256"], correct: 4},
+        {id: 40, category: "Matemática", question: "En una boletería se venden boletos numerados desde el 10 hasta el 99 y la oferta consiste en un premio sorpresa para las personas que adquieren los boletos cuyos números elevados al cuadrado al dividirse por 5 el residuo es 4. La cantidad de boletos premiados son:", options: ["34", "36", "39", "48", "52"], correct: 1},
+        {id: 41, category: "Matemática", question: "El señor Juan se dedica al transporte de carga pesada. Si su camión lleno de frutas pesa 30 toneladas y cuando contiene sólo los 2/3 de su capacidad pesa los 13/18 del peso anterior, entonces el peso del camión sin carga será:", options: ["3 toneladas", "4 toneladas", "5 toneladas", "6 toneladas", "7 toneladas"], correct: 2},
+        {id: 42, category: "Matemática", question: "En cierto colegio, la cantidad total de estudiantes es un número de 3 cifras que se divide en forma equitativa en 14 aulas. Si en un simulacro de sismo todos se reunieron en el patio en grupos de 10 estudiantes y sobraron 8, la suma de la mayor y menor cantidad posible de estudiantes que puede haber en dicho colegio, es:", options: ["786", "896", "986", "1106", "1216"], correct: 3},
+        {id: 43, category: "Matemática", question: "Manuel tiene cierta cantidad de canicas y observa que, al agruparlas de 4 en 4, le faltan dos canicas para completar un nuevo grupo; y al agruparlos de 3 en 3, le sobran 2 canicas. Si el número de canicas que tiene Manuel se puede repartir exactamente entre él y sus 4 hermanos de manera equitativa, la cantidad de canicas, como mínimo, que le tocaría a cada hermano, es:", options: ["5", "10", "12", "15", "16"], correct: 1},
+        {id: 44, category: "Matemática", question: "El Precio de una joya de oro con diamantes es DP al cubo de su peso. Si la joya que vale S/ 128 000 se partió en dos pedazos: uno es los 3/5 del otro, entonces la pérdida de valor, es:", options: ["S/84375", "S/90000", "S/38000", "S/31250", "S/67500"], correct: 1},
+
+        // --- MATEMÁTICA (Comercial/Magnitudes) ---
+        {id: 45, category: "Matemática", question: "La asociación de ex alumnos del colegio 'San José' compra una propiedad por 450000 soles, pagan los 2/3 partes al contado y se comprometen pagar por el resto un interés del 5% hasta cancelar la deuda, en este caso debe entregar la suma de 175000 soles, entonces el tiempo en meses que demora en pagar dicha asociación, es:", options: ["36", "40", "44", "42", "48"], correct: 1},
+        {id: 46, category: "Matemática", question: "Juan y Pedro solicitan préstamos, cuya suma es S/.60 000, estos fueron prestados a diferentes tasas de interés anual que, sumadas, dan 12%. Si los intereses anuales producidos por los capitales son de S/.3200 y S/.800, entonces la razón entre el menor y el mayor capital, es:", options: ["1/2", "1/3", "1/4", "1/5", "2/3"], correct: 0},
+        {id: 47, category: "Matemática", question: "Se tiene dos magnitudes A y B, tal que A es D.P. a la raíz cuadrada de B. ¿En qué porcentaje aumentará o disminuirá A, si B disminuye en un 36%?", options: ["Aumenta en un 18%", "Aumenta en un 24%", "Disminuye en un 20%", "Disminuye en un 24%", "Disminuye en un 40%"], correct: 2},
+        {id: 48, category: "Matemática", question: "En el siguiente gráfico se observan datos de 3 magnitudes proporcionales. Si se sabe que: A es DP a B² y C³ es DP a A. Entonces el valor de 'n' es:", options: ["1", "81", "2", "4", "8"], correct: 1},
+        {id: 49, category: "Matemática", question: "Carlos es un pintor trujillano, que desea implementar su taller de pintura para lo cual necesita 10 000 soles. Decide entonces realizar un préstamo, consultando en primer lugar con la Caja Trujillo que le cobra el 5,5% de interés simple semestral, en un tiempo de 3 años. Luego consulta con el Banco de Crédito, cobrándole una tasa de 10% anual de interés capitalizable, pagadero en 3 años. Entonces, la diferencia de los intereses producidos, es:", options: ["10 soles", "30 soles", "40 soles", "50 soles", "60 soles"], correct: 0},
+        {id: 50, category: "Matemática", question: "Un comerciante firmó tres letras de 1 000, 800 y 200 soles; la primera y la tercera letra vencían al cabo de 'a' y 20 días, respectivamente. Los días para el vencimiento común de la única letra de cambio son tantos como los días que le faltan a la primera, aumentado en cinco. Si el vencimiento de la segunda letra es el doble de la primera, entonces el valor de 'a', es:", options: ["10", "12", "14", "16", "18"], correct: 0},
+
+        // --- BIOLOGÍA ---
+        {id: 51, category: "Biología", question: "Leonardo, un estudiante del área de ciencia y tecnología de CEPUNT, realiza el siguiente comentario: la atmósfera primitiva contenía amoníaco, sulfuro de hidrógeno y metano, gases que hoy en día son considerados tóxicos para la mayoría de los seres vivos. Esto determinó que los primeros organismos que aparecieron en nuestro planeta son considerados:", options: ["Aerobios.", "Anaerobios.", "Autótrofos.", "Parásitos.", "Saprófitos."], correct: 1},
+        {id: 52, category: "Biología", question: "Los seres vivos somos sistemas abiertos, es decir que realizamos constantemente el intercambio de materia-energía con el entorno. Y el proceso de transformación energética que aporta energía a nuestro organismo para realizar todo tipo de trabajo celular es:", options: ["El anabolismo.", "El catabolismo.", "Homeostasis", "La fotosíntesis.", "La quimiosíntesis."], correct: 1},
+        {id: 53, category: "Biología", question: "Los bioelementos se encuentran en porcentajes variables en los seres vivos; de acuerdo a su abundancia se clasifican en macroconstituyentes y microconstituyentes. Indicar los microconstituyentes involucrados con la coagulación sanguínea, fotosíntesis y transporte de CO₂ respectivamente:", options: ["Calcio, magnesio y cobre.", "Calcio, sodio y hierro.", "Cloro, potasio y hierro.", "Hierro, potasio y manganeso.", "Magnesio, cobre y calcio."], correct: 0},
+        {id: 54, category: "Biología", question: "En el caso de María, una paciente de 35 años que se presenta con fatiga crónica y debilidad muscular, los análisis muestran niveles bajos de un microconstituyente esencial para la formación de la hemoglobina. ¿Cuál de las siguientes opciones es el microconstituyente más probablemente deficiente en esta situación?", options: ["Calcio.", "Fósforo.", "Hierro.", "Magnesio.", "Zinc."], correct: 2},
+        {id: 55, category: "Biología", question: "Las células procariotas, como las bacterias, son organismos unicelulares, de reproducción asexual y carecen del sistema de endomembranas. ¿Qué estructura bacteriana les brinda resistencia frente a los antibióticos?", options: ["Fimbria.", "Mesosoma.", "Nucleoide.", "Pared celular.", "Plásmido."], correct: 4},
+        {id: 56, category: "Biología", question: "Se basaron en las observaciones de otros científicos, como Robert Hooke, quien descubrió las células en 1665, y Anton van Leeuwenhoek, quien observó células vivas en 1674. La teoría celular es una de las teorías científicas más importantes de la biología. La teoría celular ha permitido a los científicos comprender la estructura, la función y la evolución de los seres vivos y fue establecida por:", options: ["Mendel-Morgan.", "Pasteur-Redi.", "Schwann-Harvey.", "Schwann-Schleiden.", "Virchow-Morgan."], correct: 3},
+        {id: 57, category: "Biología", question: "Nuestros fagocitos están constantemente alertas frente a cualquier partícula extraña que ingrese a nuestro organismo y para esto tienen una forma específica de endocitosis por la que estos fagocitos asimilan partículas sólidas, entre las que se incluyen los patógenos microbianos. ¿A qué tipo de endocitosis nos estamos refiriendo?", options: ["Diálisis.", "Difusión.", "Fagocitosis.", "Ósmosis.", "Pinocitosis."], correct: 2},
+        {id: 58, category: "Biología", question: "Las bacterias son organismos procarióticos que carecen de un núcleo bien diferenciado debido a la ausencia de carioteca o membrana nuclear. Además, podemos mencionar que su plasmalema presenta unas invaginaciones que se dirigen hacia el citoplasma denominadas:", options: ["Mesosomas.", "Mitocondrias.", "Paraplasma.", "Protoplasto.", "Ribosomas."], correct: 0},
+
+        // --- FÍSICA ---
+        {id: 59, category: "Física", question: "En la siguiente ecuación si D representa volumen determinar la dimensión de x. k = $\\sqrt{(Dx^3 + \\sqrt{(Dx^3 + \\sqrt{(Dx^3 + \\dots)))}} / (Dx^4 + Dx^3)$", options: ["L⁻³", "L⁻¹", "L⁻²", "L²", "L³"], correct: 2},
+        {id: 60, category: "Física", question: "Dados los vectores: $\\vec{P} = 4\\hat{i} + 3\\hat{j}$, $\\vec{Q} = -3\\hat{i} + 5\\hat{j}$, $\\vec{C} = C_1\\hat{i} + C_2\\hat{j}$. Hallar los valores de $C_1$ y $C_2$ mínimos enteros y positivos de manera que $\\vec{P}+\\vec{Q}$ sea paralelo a $\\vec{Q}+\\vec{C}$", options: ["1 y 1", "1 y 2", "4 y 3", "5 y 6", "6 y 8"], correct: 2},
+        {id: 61, category: "Física", question: "Según el gráfico, los niños jalan las cuerdas que están unidas a sus juguetes. Si estos se mueven en direcciones opuestas, indique la secuencia correcta de verdadero (V) o falso (F) respecto a las siguientes proposiciones. I. Las fuerzas que ejercen los niños no requieren de una dirección para ser estudiadas. II. Las masas de los juguetes presentan dirección. III. Para especificar la velocidad de cada juguete requiere indicar una dirección.", options: ["FFF", "FFV", "FVV", "VVF", "VVV"], correct: 1},
+        {id: 62, category: "Física", question: "María está en la terraza de su casa que se encuentra a 9 m del suelo y Pedro abajo en la calle. Si María deja caer una pelota y simultáneamente Pedro desde una altura de 1 m sobre el suelo, lanza a María otra hacia arriba con una rapidez de 8 m/s; ¿en cuánto tiempo las dos pelotas estarán a la misma altura?", options: ["1 s", "2 s", "4 s", "5 s", "6 s"], correct: 0},
+        {id: 63, category: "Física", question: "Dados los vectores A, B y C, donde $|A| = 4u$, $|B| = 8u$ y $|C| = 7u$, determine el ángulo $\\theta$, si se sabe que el vector resultante de la suma de $2A$, $2B$ y $C$ se encuentra en el eje 'Y'.", options: ["30°", "37°", "45°", "53°", "60°"], correct: 3},
+        {id: 64, category: "Física", question: "Suponga que un conductor maneja su auto a 90 km/h y debido a la ingesta de alcohol se queda dormido durante 1,2 s. ¿Qué distancia recorre durante todo este tiempo en que estuvo en movimiento?", options: ["20 m", "25 m", "30 m", "32 m", "50 m"], correct: 2},
+        {id: 65, category: "Física", question: "Una partícula describe un MRUV. En el instante $t = 2 s$ su velocidad es $-10 m/s$ y el instante $t = 7 s$ su velocidad es $-30 m/s$. ¿Cuál es la rapidez de la partícula (en m/s) luego de haber recorrido 4 m a partir del instante $t=0 s$?", options: ["2", "4", "6", "8", "10"], correct: 2},
+        {id: 66, category: "Física", question: "Un tren parte con destino de una ciudad 'A' a otra 'B', las cuales se encuentran en línea recta, en el trayecto hay un túnel por el cual debe pasar. El tren tiene una longitud de 64 m y parte del reposo desde 'A' con una aceleración constante y el túnel tiene una longitud de 101 m de largo. Si la parte delantera del tren ingresa con una rapidez de 6 m/s a la posterior con 10 m/s. Evaluar la rapidez que tendrá dicho tren en el instante en que la mitad de éste se encuentre saliendo del túnel.", options: ["8 m/s", "10 m/s", "11 m/s", "12 m/s", "13 m/s"], correct: 4},
+        {id: 67, category: "Física", question: "Cuevita, luego de driblar el arquero, se encuentra a 6 m frente al arco de 2,5 m de altura. Si en ese instante lanza el balón con una rapidez de 10 m/s y bajo un ángulo de 53° respecto de la horizontal, considere el $g=10 m/s^2$. La pelota:", options: ["No se puede precisar.", "No, la pelota choca en el poste superior.", "No, la pelota pasa por encima del poste superior.", "Sí, la pelota cae dentro del arco.", "Sí, la pelota impacta en el arco antes de ingresar al arco y luego de rebotar ingresa."], correct: 2},
+        {id: 68, category: "Física", question: "Si para las empresas celulares con tecnología GPS el periodo orbital es de 15.7 horas, evaluar y determinar la magnitud de la velocidad lineal con la que gira este satélite. Considere $R = 6 \\times 10^6 m$, $\\pi = 3.14$", options: ["647,67", "657,26", "686,67", "707,87", "755,62"], correct: 2},
+        {id: 69, category: "Física", question: "Una partícula se mueve sobre la trayectoria $x^2 + y^2 = 16$ considerando un movimiento anti horario con $S = 2t$. Donde $S$ se mide en $m$ y $t$ en $s$; si el movimiento se inicia a partir del punto de intersección del eje $X$ con la circunferencia. Determine el módulo de la aceleración de la partícula (en $m/s^2$) en el instante $t = 2 s$.", options: ["4", "7,5", "8", "16,5", "18,5"], correct: 0},
+
+        // --- QUÍMICA ---
+        {id: 70, category: "Química", question: "El agua regia es una solución altamente corrosiva, formada por la mezcla de tres partes en volumen de ácido clorhídrico ($HCl_{(ac)}$) y una parte de ácido nítrico ($HNO_3$). Al descomponerse por acción del calor genera cloruro de nitrosilo ($NOCl$), un gas tóxico por inhalación causa dificultad para respirar. Marque la alternativa que contiene las ramas de la química involucradas.", options: ["Analítica - Orgánica - Fisicoquímica - Inorgánica", "Fisicoquímica - Analítica - Bioquímica - Orgánica", "Inorgánica - Orgánica - Fisicoquímica - Analítica", "Inorgánica - Analítica - Fisicoquímica - Bioquímica", "Orgánica - Analítica - Fisicoquímica - Bioquímica"], correct: 3},
+        {id: 71, category: "Química", question: "El GLP (gas licuado de petróleo, gases cuyos puntos de ebullición están entre $-65\\text{°C}$ y $0\\text{°C}$), se obtiene por destilación simple a partir del petróleo crudo. Además, el GLP es ampliamente utilizado debido a su poder calorífico de $22000\\text{ kcal/m}^3$. Considerando las propiedades de la materia, las 2 propiedades del GLP mencionadas son:", options: ["Extensiva - Extensiva", "Intensiva - Extensiva", "Intensiva - Intensiva", "Extensiva - Química", "Química - Intensiva"], correct: 2},
+        {id: 72, category: "Química", question: "John Dalton presentó el primer modelo atómico con base científica. Respecto a la Teoría Atómica de Dalton: 1) Cada elemento se compone de partículas diminutas e indestructibles. 2) Los átomos no pueden crearse ni destruirse durante una transformación química. 3) Todos los átomos de un elemento presentan las mismas propiedades. 4) Los átomos de un mismo elemento pueden presentar diferentes masas. 5) Para formar compuestos, los átomos pueden combinarse en proporciones sencillas. Son ciertas:", options: ["Solo 1, 2 y 3", "Solo 1, 2, 3 y 5", "Solo 2, 3, 4 y 5", "Solo 4 y 5", "Solo 1, 2, 3 y 4"], correct: 1},
+        {id: 73, category: "Química", question: "La proposición: Las especies iónicas $E^{3-}$ (masa 79) y $L^{5+}$ (masa 79) son isoelectrónicas, si el número de neutrones de $L$ es 51, entonces el número de neutrones de $E$, es:", options: ["40", "42", "45", "46", "48"], correct: 3},
+        {id: 74, category: "Química", question: "Según el modelo de Rutherford, se afirma: 1) El electrón gira alrededor del núcleo en órbitas circulares. 2) El núcleo es de carga positiva y de alta densidad. 3) El tamaño del núcleo es 10 000 veces mayor al del átomo. 4) Solo se cumple en la lámina de oro. 5) Los electrones no son significativos en la determinación de la masa del átomo. Son ciertas:", options: ["1, 2 y 3", "1, 2 y 5", "2, 3 y 4", "2, 4 y 5", "3, 4 y 5"], correct: 1},
+        {id: 75, category: "Química", question: "El yodo-131 (vida media: 8 días), es usado en tratamiento de cáncer diferenciado de tiroides... Después de cuántos días se habrá convertido el 96,875% de cada lote producido de dicho radioisótopo:", options: ["16", "24", "32", "40", "48"], correct: 3},
+        {id: 76, category: "Química", question: "En el modelo atómico de Bohr de la estructura del átomo... El electrón más involucrado en el salto electrónico, es:", options: ["1", "2", "3", "4", "5"], correct: 1},
+        {id: 77, category: "Química", question: "¿Cuántas toneladas de carbón serán necesarias quemar para obtener la misma energía que producen 418,6 g de un material radioactivo consumido en un reactor nuclear, si el carbón produce $3,92 \\times 10^7 J$ por cada 12 g de carbón?", options: ["$1,32\\text{ t}$", "$1,15\\text{ t}$", "$11,5\\text{ t}$", "$2,15 \\times 10^6\\text{ t}$", "$2,16 \\times 10^6\\text{ t}$"], correct: 3},
+        {id: 78, category: "Química", question: "Determinar el número de electrones desapareados del $Fe^{3+}$ (Z=26) y del $Cr$ (Z=24), respectivamente:", options: ["4 y 4", "4 y 6", "5 y 4", "5 y 5", "5 y 6"], correct: 4},
+        {id: 79, category: "Química", question: "Un átomo tiene en su cuarto nivel de energía 6 electrones, si en su núcleo existen 40 neutrones. El número de nucleones que tiene dicho átomo, es:", options: ["54", "64", "74", "78", "84"], correct: 2},
+        {id: 80, category: "Química", question: "Las características de un electrón en un átomo se definen con los cuatro números cuánticos. La alternativa incorrecta es:", options: ["El número máximo de electrones para una determinada capa es $2n^2$.", "En un orbital cualquiera el número máximo de electrones es 2, sin ninguna otra restricción.", "Para cualquier valor de $l$, el máximo número de electrones en dicho subnivel es $2(2l+2)$.", "Un nivel 'n' contiene como máximo n subniveles", "Un subnivel $l$ contiene como máximo $(2l+1)$ orbitales o valores para $m$ diferentes."], correct: 2},
+
+        // --- DESARROLLO PERSONAL (Psicología) ---
+        {id: 81, category: "Psicología", question: "Alfonso cree que las chicas de su salón de clases, están muy atentas a lo que hace. La idea de que lo están observando, es una característica del pensamiento adolescente conocido como:", options: ["Audiencia imaginaria", "Egocentrismo adolescente", "Fábula de la invencibilidad", "Fabulación personal", "Segundo egocentrismo"], correct: 0},
+        {id: 82, category: "Psicología", question: "Una sociedad compleja de redes informáticas altamente tecnológicas, ha hecho que el adolescente forme un distinto enfoque de la vida y su cultura. Del enunciado subrayado, podemos inferir que:", options: ["La adolescencia es solo una etapa de cambios afectivos.", "La adolescencia es una construcción sociocultural.", "La adolescencia es una etapa de complejos.", "La cultura adolescente es manifestación de la crisis sentimental.", "Los adolescentes se enamoran mediante redes sociales."], correct: 1},
+        {id: 83, category: "Psicología", question: "La expresión 'El hombre es mejor que la mujer en el trabajo, el hombre aprende más rápido que la mujer', son ejemplos de:", options: ["Actitudes", "Aptitudes", "Discriminación", "Estereotipos", "Experiencias negativas"], correct: 3},
+        {id: 84, category: "Psicología", question: "Miguel comenta que, por la mala conducta de su hijo, éste fue recluido en un centro penitenciario. Al terminar su internamiento, cambió notablemente su comportamiento y ha decidido estudiar una carrera universitaria. El tipo de socialización que se da en este caso se denomina:", options: ["Primaria.", "Básica", "Secundaria", "Terciaria", "Superior"], correct: 3},
+        {id: 85, category: "Psicología", question: "Ana y Luis son padres de Susana, tratan de consentirle en todo porque alegan que ellos, no han contado con el apoyo de sus padres. Muchas veces evitan ser drásticos y severos porque consideran que no es correcto. ¿Qué medidas tomarías para ejercer un buen estilo de crianza?", options: ["Deberían usar rol a los abuelos, ya que ellos tienen más experiencia en la crianza de hijos.", "Me centraría más en el bienestar de Susana, ya que ella no estará toda la vida conmigo.", "Podría darle escasas normas, mucho afecto, pero consensuando siempre los acuerdos.", "Procuraría darle mucho afecto prescindiendo de las normas.", "Trataría de combinar equilibradamente el afecto con el control, buscando el consenso con Susana."], correct: 4},
+        {id: 86, category: "Psicología", question: "Los padres de Juan y Mary, se caracterizan por ser cálidos con sus hijos, pero al mismo tiempo establecen límites brindando apoyo y orientación. Su estilo de crianza es:", options: ["Autoritario.", "Democrático", "Negligente.", "Pasivo.", "Permisivo."], correct: 1},
+        {id: 87, category: "Psicología", question: "Ángel es un alumno que le falta madurez emocional, tiene problemas de conducta y también dificultades para adaptarse a las normas del colegio. Sus padres nunca asisten al colegio cuando los cita el departamento de TOE. En este caso, podemos decir que los padres de Miguel, tienen un estilo de crianza:", options: ["Asertivo", "Autoritario.", "Democrático", "Desapegado", "Permisivo"], correct: 3},
+        {id: 88, category: "Psicología", question: "Cuando una persona tiene seguridad en sus elecciones personales y elige la manera de ser que mejor lo represente en distintos ámbitos de la vida, ha logrado la:", options: ["Confusión de identidad", "Crisis de identidad", "Difusión de la identidad", "Moratoria de identidad", "Formación de identidad"], correct: 4},
+        {id: 89, category: "Psicología", question: "Tomás cursa el Sto. Grado de Secundaria. Le manifiesta a su tutora que, le gustaría ser un gran ingeniero civil como su padre. Según la teoría de Marcia, la identidad de Tomás, se ubica en el nivel denominado:", options: ["Confusión de roles", "difusión", "hipotética", "logro", "moratoria"], correct: 2},
+        {id: 90, category: "Psicología", question: "Carlos Alberto se muestra dependiente y conformista ante los demás. No participa en las tareas grupales y no muestra muchas ganas de superación. ¿Cuál sería la causa de su manera de ser?", options: ["Posee una identidad conflictiva", "Posee una identidad difusa", "Posee una identidad hipotecada", "Posee una identidad lograda", "Posee una identidad moratoria"], correct: 1},
+
+        // --- CIUDADANÍA Y CÍVICA / FILOSOFÍA ---
+        {id: 91, category: "Filosofía", question: "Un filósofo afirma que: 'Todo lo que es, tiende a seguir siendo, pero, en la realidad, todo lo que es, va dejando de ser para ser otra cosa'. La afirmación del filósofo, ¿en qué método filosófico se sustenta?:", options: ["dialéctico", "estructural", "fenomenológico", "intuitivo", "metafísico"], correct: 0},
+        {id: 92, category: "Filosofía", question: "Tomás crees que con las fórmulas matemáticas de hace años, así pues, la fórmula del binomio al cuadrado sigue siendo $(a+b)^2 = a^2 + 2ab + b^2$. La característica del conocimiento que sobresale es la...", options: ["Experimentación", "Fundamentación", "Necesidad", "Objetividad", "Universalidad"], correct: 4},
+        {id: 93, category: "Filosofía", question: "La siguiente expresión: 'Cuando expresamos las ideas de las ciencias en términos matemáticos no hay ambigüedad'. Es una reflexión que se enmarca dentro de la Lógica de la ciencia. La alternativa que completa el sentido del enunciado es:", options: ["Estética", "Lógica", "Metodología", "Ontología", "Semántica"], correct: 1},
+        {id: 94, category: "Filosofía", question: "Gustavo, alumno de derecho, nos explica que la afirmación 'Lo saludable es más importante que lo agradable', hace referencia a la característica del valor de:", options: ["Dependencia", "Gradualidad", "Jerarquía", "Objetividad", "Polaridad"], correct: 2},
+        {
+            id: 95,
+            category: "Cívica",
+            question: "Son características de una persona moral:\n1) Es consciente de los principios bajo los que está sometida su conducta.\n2) Tiene libertad de voluntad.\n3) Es incapaz de contraer obligaciones.\n4) Es consciente de sus actos.\n5) Es incapaz de decidir.\nSon ciertas:",
+            options: ["1, 2 y 4", "1, 3 y 5", "2 y 3", "Solo 1 y 3", "solo 5"],
+            correct: 0
+        },
+
+        // --- CIENCIAS SOCIALES (Historia) ---
+        {id: 96, category: "Historia", question: "Su descubrimiento se llega a comparar con el Señor de Sipán. Antes de su hallazgo se pensaba que solo los hombres habían podido ejercer altos cargos en el antiguo Perú. A su vez se cree que la misteriosa dama tenía el status de gobernante en la sociedad teocrática del Valle Chicama y era considerada un personaje casi divino. El texto hace referencia a:", options: ["La Dama de la Huaca", "La joven madre de Paiján", "La mujer de los plumajes hallada en Ayacucho", "La Niña de chorrera", "La Sacerdotisa de Moro"], correct: 4},
+
+        // --- GEOGRAFÍA ---
+        {id: 97, category: "Geografía", question: "El espesor de la corteza, medida entre la superficie y la discontinuidad de Mohorovičić, es de aproximadamente 5 Km. en los océanos y de 30 a 65 Km. en los continentes. Está compuesta por dos capas denominadas SIAL y SIMA, dentro de su estructura las rocas que predominan respectivamente son:", options: ["Basalto - Granito", "Gabro - Diorita", "Granito - Basalto", "Granito - Sillar", "Mármol - Cuarcita"], correct: 2},
+        {id: 98, category: "Geografía", question: "El relieve terrestre es el término que define a las formas que tiene la corteza terrestre o litosfera en la superficie, tanto en relación con las tierras emergidas como en cuanto al relieve oceánico, es decir, el fondo del mar. Por lo que se conoce como la superficie física de la tierra con distintos relieves a:", options: ["Elipsoide", "Esferoide", "Geoide", "Plana", "Topográfica"], correct: 4},
+
+        // --- ECONOMÍA ---
+        {id: 99, category: "Economía", question: "El mercantilismo fue una doctrina económica que predominó en Europa entre los siglos XVI y XVIII... ¿Qué medidas adoptaron los países europeos para proteger sus intereses económicos frente al comercio con otras naciones?", options: ["Aranceles, subsidios y cuotas", "Competencia, prohibiciones y licencias.", "Duplicados, devaluaciones y embargos.", "Ninguna de las anteriores.", "Tratados, convenios y acuerdos."], correct: 0},
+        {id: 100, category: "Economía", question: "Arturito es un ciudadano preocupado por el desarrollo de su localidad, ello lo ha llevado a notar algunos aspectos que influyen en la sociedad y que representan problemas para el óptimo desarrollo de sus compatriotas en general, pero sobre todo de sus vecinos; algunas de estas dificultades son: deficiente acceso a la salud, la escasa disponibilidad de viviendas, bajo nivel educativo, inseguridad ciudadana, entre otros. ¿De acuerdo a los fundamentos económicos, ¿Qué agente está llevado a atacar y/o tratar de solucionar la problemática identificada por Arturito?", options: ["Arturito es un agente de cambio en su país.", "Las empresas privadas del país.", "Las familias de su localidad.", "Los agentes económicos del extranjero.", "Los gobernantes de turno."], correct: 4}
+    ];
+}
+
+function setupExam() {
+    document.getElementById('introScreen').classList.add('hidden');
+    document.getElementById('examContent').classList.remove('hidden');
+    document.getElementById('finishBtnTop').classList.remove('hidden');
+    document.getElementById('totalQNum').textContent = examQuestions.length;
+    
+    userAnswers = new Array(examQuestions.length).fill(null);
+    renderGrid();
+    loadQuestion(0);
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        const h = Math.floor(timeLeft/3600).toString().padStart(2,'0');
+        const m = Math.floor((timeLeft%3600)/60).toString().padStart(2,'0');
+        const s = (timeLeft%60).toString().padStart(2,'0');
+        document.getElementById('timeDisplay').textContent = `${h}:${m}:${s}`;
+        if(timeLeft <= 0) finishExam();
+    }, 1000);
+}
+
+function renderGrid() {
+    const grid = document.getElementById('questionGrid');
+    grid.innerHTML = '';
+    examQuestions.forEach((_, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'nav-grid-btn bg-gray-100 text-gray-600 hover:bg-gray-200';
+        btn.textContent = i+1;
+        btn.onclick = () => loadQuestion(i);
+        btn.id = `grid-btn-${i}`;
+        grid.appendChild(btn);
+    });
+}
+
+function loadQuestion(index) {
+    currentQuestionIndex = index;
+    const q = examQuestions[index];
+    document.getElementById('currentQNum').textContent = index+1;
+    document.getElementById('questionCategory').textContent = q.category;
+    document.getElementById('questionText').textContent = q.question;
+    
+    const cont = document.getElementById('optionsContainer');
+    cont.innerHTML = '';
+    q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = `option-btn w-full text-left p-4 border border-gray-200 rounded-xl flex items-center ${userAnswers[index]===i ? 'selected' : ''}`;
+        btn.innerHTML = `<span class="w-8 h-8 rounded-full bg-gray-100 mr-4 flex items-center justify-center font-bold">${String.fromCharCode(65+i)}</span><span>${opt}</span>`;
+        btn.onclick = () => {
+            userAnswers[index] = i;
+            loadQuestion(index); // Recargar para actualizar UI
+            updateGrid();
+        };
+        cont.appendChild(btn);
+    });
+    
+    document.getElementById('prevBtn').disabled = index === 0;
+    document.getElementById('nextBtn').textContent = index === examQuestions.length-1 ? 'Finalizar' : 'Siguiente →';
+    updateGrid();
+    if(window.MathJax) MathJax.typesetPromise();
+}
+
+function updateGrid() {
+    document.querySelectorAll('.nav-grid-btn').forEach((btn, i) => {
+        btn.className = `nav-grid-btn ${userAnswers[i]!==null ? 'answered' : 'bg-gray-100'} ${i===currentQuestionIndex ? 'current' : ''}`;
+    });
+    document.getElementById('answeredCount').textContent = userAnswers.filter(a => a!==null).length;
+}
+
+function prevQuestion() { if(currentQuestionIndex > 0) loadQuestion(currentQuestionIndex-1); }
+function nextQuestion() { 
+    if(currentQuestionIndex < examQuestions.length-1) loadQuestion(currentQuestionIndex+1); 
+    else finishExam();
+}
+
+/**
+ * Función para calcular y mostrar el puntaje final.
+ * Regla: +4 por Acierto, -1 por Error. Permite puntajes negativos.
+ */
+function finishExam() {
+    clearInterval(timerInterval);
+    document.getElementById('examContent').classList.add('hidden');
+    document.querySelector('header').classList.add('hidden');
+    document.getElementById('resultsScreen').classList.remove('hidden');
+    
+    let correct = 0, incorrect = 0;
+    let knowCorrect = 0, knowIncorrect = 0;
+    let aptCorrect = 0, aptIncorrect = 0;
+
+    examQuestions.forEach((q, i) => {
+        const ans = userAnswers[i];
+        const isApt = isAptitudeQuestion(q);
+
+        if (ans === q.correct) {
+            correct++;
+            if (isApt) aptCorrect++; else knowCorrect++;
+        } else if (ans !== null) {
+            incorrect++;
+            if (isApt) aptIncorrect++; else knowIncorrect++;
+        }
+    });
+
+    const POINTS_PER_CORRECT = 4;
+    const PENALTY_INCORRECT = 1;
+
+    // --- NUEVA LÓGICA DE CÁLCULO ---
+
+    // 1. Cálculo de puntajes parciales (permite negativos)
+    // Se calcula con la fórmula lineal: (Aciertos * 4) - (Errores * 1)
+    const knowledgeScore = (knowCorrect * POINTS_PER_CORRECT) - (knowIncorrect * PENALTY_INCORRECT);
+    const aptitudeScore  = (aptCorrect  * POINTS_PER_CORRECT) - (aptIncorrect  * PENALTY_INCORRECT);
+
+    // 2. Cálculo del puntaje final (suma simple de los parciales)
+    const finalScore = knowledgeScore + aptitudeScore; 
+    
+    // NOTA: El puntaje máximo teórico sigue siendo 400.
+    // La lógica anterior de ponderación y umbral de Math.max(0, ...) ha sido ELIMINADA.
+    
+    // --- FIN NUEVA LÓGICA DE CÁLCULO ---
+
+    // Actualización de los elementos en el HTML
+    document.getElementById('totalScore').textContent     = finalScore;
+    document.getElementById('knowledgeScore').textContent = knowledgeScore;
+    document.getElementById('aptitudeScore').textContent  = aptitudeScore;
+
+    document.getElementById('totalCorrect').textContent   = correct;
+    document.getElementById('totalIncorrect').textContent = incorrect;
+}
+
+if(!localStorage.getItem('prepIA_userID')) window.location.href = 'login.html';
