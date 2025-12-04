@@ -106,14 +106,14 @@ function generateLocalQuestions() {
         {
             id: 10,
             category: "DPCC",
-            question: "Los estados de la consciencia son:",
+            question: "Los estados de la consciencia, son:",
             options: ["vigilia alerta y sueño sin ensueño", "vigilia ensueño y ensoñación", "vigilia y ensueño inconsciente", "vigilia alerta y domitación", "vigilia de ensueño y sensación"],
             correct: 0
         },
         {
             id: 11,
             category: "DPCC",
-            question: "Son funciones del Sistema Electoral 1. el planeamiento de los procesos electorales 2. la organización y ejecución de los procesos electorales 3. la custodia de un registro único de identificación de las personas 4. el registro de actos que modifican el estado civil 5. el control del orden interno durante los regímenes de excepción, si así lo dispone el decreto. SON CIERTAS:",
+            question: "Son funciones del Sistema Electoral: 1. el planeamiento de los procesos electorales 2. la organización y ejecución de los procesos electorales 3. la custodia de un registro único de identificación de las personas 4. el registro de actos que modifican el estado civil 5. el control del orden interno durante los regímenes de excepción, si así lo dispone el decreto. SON CIERTAS:",
             options: ["1, 3, 4 y 5", "2, 3, 4 y 5", "1, 2, 3 y 5", "1, 2, 3, 4 y 5", "1, 2, 3 y 4"],
             correct: 4
         },
@@ -219,141 +219,141 @@ function generateLocalQuestions() {
         // --- COMUNICACIÓN Y LENGUAJE ---
         {
             id: 26,
-            category: "Comunicación/Lenguaje",
+            category: "Comunicación",
             question: "En el poema se aprecia: 1. El empleo de anáfora 2. Los versos presentan ritmo 3. La identificación con la servidumbre 4. Las interrogantes como cuestionamiento 5. Versos alejandrinos SON CIERTAS:",
             options: ["1, 2 y 3", "1, 2 y 4", "2, 3 y 4", "3, 4 y 5", "solo 3 y 4"],
             correct: 1
         },
         {
             id: 27,
-            category: "Comunicación/Lenguaje",
+            category: "Comunicación",
             question: "Del poema anterior, la concepción que evidencia el poeta sobre la mujer es:",
             options: ["Una mujer sumisa y dependiente.", "Una mujer dedicada a las labores del hogar.", "La mujer es capaz de llenar los vacíos en el hombre.", "La mujer como ejemplo de superación.", "La mujer es dominante."],
             correct: 2
         },
         {
             id: 28,
-            category: "Comunicación/Lenguaje",
+            category: "Comunicación",
             question: "La frase que mejor resume al fragmento es:",
             options: ["El trabajo comunitario de los indígenas.", "La organización social de los comuneros.", "Los estratos sociales de las comunidades andinas.", "La organización política de los comuneros.", "La pobreza de los indígenas del Perú."],
             correct: 0
         },
         {
             id: 29,
-            category: "Comunicación/Lenguaje",
+            category: "Comunicación",
             question: "Del fragmento anterior, el autor empleó los guiones cortos, en el texto, para:",
             options: ["insertar al narrador protagonista", "mostrar una ironía en su descripción", "insertar un diálogo breve del narrador para resaltar aspectos épicos", "presentar una explicación o precisión", "agregar su opinión sobre el hecho"],
             correct: 3
         },
         {
             id: 30,
-            category: "Comunicación/Lenguaje",
+            category: "Comunicación",
             question: "El texto, por su superestructura es:",
             options: ["descriptivo", "coloquial", "expositivo", "instructivo", "narrativo"],
             correct: 4
         },
         {
             id: 31,
-            category: "Comunicación/Lenguaje",
+            category: "Comunicación",
             question: "Una idea NO planteada en el texto es:",
             options: ["La esclavitud", "Las costumbres en Arabia Saudita en el pasado", "La política gubernamental", "El deseo de libertad", "Los privilegios de la clase dominante"],
             correct: 2
         },
         {
             id: 32,
-            category: "Comunicación/Lenguaje",
+            category: "Comunicación",
             question: "Son ideas implícitas en el texto: 1. La influencia que ejercen unas naciones sobre las otras 2. En los mercados de Arabia Saudita se vende solo oro 3. Arabia Saudita es una monarquía 4. El petróleo es la principal fuente de riqueza de Arabia Saudita 5. Nunca existió esclavitud en Arabia Saudita. SON CIERTAS:",
             options: ["1 y 2", "1 y 3", "2 y 4", "3 y 5", "2 y 3"],
             correct: 1
         },
         {
             id: 33,
-            category: "Comunicación/Lenguaje",
+            category: "Comunicación",
             question: "Según el texto, si en nuestro país se implementara una política específica para controlar el ingreso de migrantes, sería a causa de:",
             options: ["la mano de obra para nuestras industrias serían muy baratas", "el número de migrantes excedió la oferta migratoria del país", "el país se convertiría en un estado paternalista", "la crisis social, política y económica impide controlar el accionar de los migrantes", "hay fondos no gastados en el presupuesto nacional"],
             correct: 1
         },
         {
             id: 34,
-            category: "Comunicación/Lenguaje",
+            category: "Comunicación",
             question: "El tema central del texto versa sobre:",
             options: ["La propagación del derecho a migrar a países subdesarrollados.", "La migración como base esencial para cubrir la mano de obra faltante.", "La imposición de condiciones de seguridad entre los países migrantes.", "Los antecedentes policiales como requisito base para migrar a un país.", "Las medidas políticas de los Estados para controlar las corrientes migratorias."],
             correct: 4
         },
         {
             id: 35,
-            category: "Comunicación/Lenguaje",
+            category: "Comunicación",
             question: "Uno de los siguientes enunciados resulta incompatible con el contenido del texto:",
             options: ["Los Estados receptores deben invertir ingentes cantidades de recursos para hacer frente a desequilibrio de oferta y demanda migratoria.", "En nuestro país existen políticas relacionadas con el control de flujo migratorios.", "Las medidas migratorias necesitan una gran inversión económica.", "El derecho a emigrar permite que cualquiera se mude a la nación que desee.", "La visa es una regulación política estatal que busca controlar la migración."],
             correct: 3
         },
         {
             id: 36,
-            category: "Comunicación/Lenguaje",
+            category: "Comunicación",
             question: "Se aprecian las siguientes características: 1. transmite emociones y sentimientos del autor 2. predomina la subjetividad 3. utiliza adjetivos para caracterizar al personaje 4. el autor transmite al lector unos conocimientos 5. predomina la función apelativa SON CIERTAS:",
             options: ["1, 2, 3 y 4", "1, 3, 4 y 5", "solo 1, 2 y 3", "2, 4 y 5", "solo 4 y 5"],
             correct: 2
         },
         {
             id: 37,
-            category: "Comunicación/Lenguaje",
+            category: "Comunicación",
             question: "El tipo de DESCRIPCIÓN literaria expresada por el autor en el texto es:",
             options: ["caricatura", "prosopografía", "paralelo", "etopeya", "retrato"],
             correct: 1
         },
         {
             id: 38,
-            category: "Comunicación/Lenguaje",
+            category: "Lenguaje",
             question: "Cuantifique los SUSTANTIVOS: *Segismundo, muerte, madre, rey, castillo, montes, custodia, Clotaldo*",
             options: ["ocho", "siete", "diez", "cinco", "seis"],
             correct: 1
         },
         {
             id: 39,
-            category: "Comunicación/Lenguaje",
-            question: "Del texto anterior, cuantifique los VERBOS: nació, causando, mandó, encerrar",
+            category: "Lenguaje",
+            question: "Del texto anterior, cuantifique los VERBOS: *nació, causando, mandó, encerrar*",
             options: ["uno", "dos", "tres", "cuatro", "cinco"],
             correct: 2
         },
         {
             id: 40,
-            category: "Comunicación/Lenguaje",
+            category: "Lenguaje",
             question: "Del texto anterior, cuantifique (el - los) ADJETIVOS CALIFICATIVOS: *perdido, salvajes*",
             options: ["cuatro", "tres", "uno", "dos", "ninguno"],
             correct: 3
         },
         {
             id: 41,
-            category: "Comunicación/Lenguaje",
+            category: "Lenguaje",
             question: "Cuantifique los SUSTANTIVOS: *asertividad, respeto, personas, capacidad, emociones, pensamientos, creencias, honestidad, característica, muchedumbre, semejantes*",
             options: ["siete", "ocho", "nueve", "diez", "once"],
             correct: 4
         },
         {
             id: 42,
-            category: "Comunicación/Lenguaje",
+            category: "Lenguaje",
             question: "Del texto anterior, el SUSTANTIVO muchedumbre, pertenece a la clase de: 1. colectivos 2. abstractos 3. concretos 4. oración sustantiva 5. locución sustantivada SON CIERTAS:",
             options: ["1 y 3", "2 y 3", "3 y 4", "4 y 5", "solo 1"],
             correct: 0
         },
         {
             id: 43,
-            category: "Comunicación/Lenguaje",
+            category: "Lenguaje",
             question: "Del texto anterior: Es la capacidad que tenemos para expresar las emociones, pensamientos y creencias. Los SUSTANTIVOS presentes en cantidad y clase, respectivamente son: *capacidad* (abstracto), *emociones* (abstracto), *pensamientos* (abstracto), *creencias* (abstracto).",
             options: ["un concreto tres abstractos", "tres concretos un abstracto", "cuatro abstractos", "cuatro concretos", "cuatro sustantivos frase"],
             correct: 2
         },
         {
             id: 44,
-            category: "Comunicación/Lenguaje",
+            category: "Lenguaje",
             question: "Enunciado en el que se emplea correctamente el ADJETIVO en grado superlativo:",
             options: ["El ejercicio es correcto.", "El saber fue muy básico.", "La ley resultó importante.", "No tengo la más mínima idea.", "Tu nota fue más mejor."],
             correct: 3
         },
         {
             id: 45,
-            category: "Comunicación/Lenguaje",
-            question: "En el caso siguiente: \"Lucas es un destacado periodista y escribe el editorial del diario por pedido del jefe de prensa quien es el encargado de transmitir a los trabajadores la linea de pensamiento del director general\". El **emisor** es:",
+            category: "Lenguaje",
+            question: "En el caso siguiente: \"Lucas es un destacado periodista y escribe el editorial del diario por pedido del jefe de prensa quien es el encargado de transmitir a los trabajadores la linea de pensamiento del director general\". El emisor es:",
             options: ["Lucas", "El diario", "El jefe de prensa", "El director general", "Los trabajadores del diario"],
             correct: 3
         },
@@ -368,8 +368,8 @@ function generateLocalQuestions() {
         {
             id: 47,
             category: "Inglés",
-            question: "Fill in the blanks on the text above: A. Good morning, I'd like ___ ham, please. B: How ___ would you like? A: Four slices B: Would you like anything else? A: Yes, I'd like ___ rice. Do you have any \"costeño\"? B: I'm afraid we don't have ___ \"costeño\", what about \"El Granadito\"? A: No, thank you. Just the ham then. How ___ is that? B: It's twelve soles. A: Here you are. Thanks.",
-            options: ["some – much – some – any – much,", "much – some – some – any – a lot of,", "a lot of – many – some – any – few,", "any – many – much – some – any,", "any – many – some – much – a few..."],
+            question: "Fill in the blanks on the text above: A. Good morning, I'd like ___ ham, please. B: How ___ would you like? A: Four slices B: Would you like anything else? A: Yes, I'd like ___ rice. Do you have any \"costeño\"? B: I'm afraid we don't have ___ \"costeño\", what about \"El Granadito\"? A: No, thank you. Just the ham then. How ___ is that? B: It's twelve soles.",
+            options: ["some – much – some – any – much", "much – some – some – any – a lot of", "a lot of – many – some – any – few", "any – many – much – some – any", "any – many – some – much – a few..."],
             correct: 4
         },
         {
@@ -404,7 +404,7 @@ function generateLocalQuestions() {
         {
             id: 52,
             category: "Matemática",
-            question: "La suma de las cifras del $3^{\circ}$ término omitido es:",
+            question: "La suma de las cifras del 3° término omitido es:",
             options: ["9", "10", "4", "7", "14"],
             correct: 2
         },
@@ -433,27 +433,27 @@ function generateLocalQuestions() {
             id: 56,
             category: "Matemática",
             question: "El área de la sección longitudinal de la base de la estatua es:",
-            options: ["20 $m^2$", "22 $m^2$", "24 $m^2$", "26 $m^2$", "28 $m^2$"],
+            options: ["20 m²", "22 m²", "24 m²", "26 m²", "28 m²"],
             correct: 3
         },
         {
             id: 57,
             category: "Matemática",
-            question: "Los estudiantes del área \"A\" mencionan que la academia tiene **\"M\" años**, donde: $M = 3\\theta(\\sin^2\\alpha + \\cos^2\\alpha) - 2\\theta(\\sin^2\\alpha + \\cos^2\\alpha)$, entonces el tiempo de creación de la academia, en años, es:",
+            question: "Los estudiantes del área \"A\" mencionan que la academia tiene \"M\" años, donde: M = 3θ(sin²α + cos²α) - 2θ(sin²α + cos²α), entonces el tiempo de creación de la academia, en años, es:",
             options: ["2", "4", "6", "8", "10"],
             correct: 2
         },
         {
             id: 58,
             category: "Matemática",
-            question: "Los estudiantes del área \"B\" menciona que la academia tiene **\"P\" años**, donde: $P = 25\\sin\\alpha \\cos\\alpha$ y $\\sin\\alpha - \\cos\\alpha = \\frac{3}{5}$, entonces el tiempo de creación de la academia, en años, es:",
+            question: "Los estudiantes del área \"B\" menciona que la academia tiene \"P\" años, donde: P = 25·sinα·cosα y sinα - cosα = 3/5, entonces el tiempo de creación de la academia, en años, es:",
             options: ["8", "9", "10", "11", "12"],
             correct: 2
         },
         {
             id: 59,
             category: "Matemática",
-            question: "Los estudiantes del área \"C - D\" mencionan que la academia tiene **\"R\" años**, donde: $R = \\frac{\\sin\\alpha + \\sin\\theta + \\sin\\phi}{3} $ y se sabe que: $\\sin\\alpha + \\sin\\theta + \\sin\\phi = 2$, $a + b + c = 0, abc = 3$, entonces el tiempo de creación de la academia, en años, es:",
+            question: "Los estudiantes del área \"C - D\" mencionan que la academia tiene \"R\" años, donde: R = (sinα + sinθ + sinφ)/3 y se sabe que: sinα + sinθ + sinφ = 2, a + b + c = 0, abc = 3, entonces el tiempo de creación de la academia, en años, es:",
             options: ["7", "9", "11", "13", "15"],
             correct: 2
         },
@@ -461,7 +461,7 @@ function generateLocalQuestions() {
             id: 60,
             category: "Matemática",
             question: "La ecuación de la sección longitudinal del depósito, es:",
-            options: ["$x^2 = 12y$", "$x^2 = -12y$", "$y^2 = 12x$", "$x^2 = 16y$", "$y^2 = 12x$"],
+            options: ["x² = 12y", "x² = -12y", "y² = 12x", "x² = 16y", "y² = 12x"],
             correct: 4
         },
         {
@@ -502,14 +502,14 @@ function generateLocalQuestions() {
         {
             id: 66,
             category: "Matemática",
-            question: "Con la información alcanzada anteriormente se afirma que el **promedio aritmético**, es:",
+            question: "Con la información alcanzada anteriormente se afirma que el promedio aritmético, es:",
             options: ["57,50", "58,50", "59,20", "59,56", "60,30"],
             correct: 3
         },
         {
             id: 67,
             category: "Matemática",
-            question: "La **MODA** del conjunto de datos brindados anteriormente, es:",
+            question: "La MODA del conjunto de datos brindados anteriormente, es:",
             options: ["57,86", "58,18", "58,58", "59,40", "60,98"],
             correct: 1
         },
@@ -523,14 +523,14 @@ function generateLocalQuestions() {
         {
             id: 69,
             category: "Matemática",
-            question: "La **diferencia** de dichos números es:",
+            question: "La diferencia de dichos números es:",
             options: ["24", "26", "28", "30", "32"],
             correct: 3
         },
         {
             id: 70,
             category: "Matemática",
-            question: "El **mínimo común múltiplo** de los números es:",
+            question: "El mínimo común múltiplo de los números es:",
             options: ["38", "40", "42", "43", "44"],
             correct: 4
         },
@@ -538,14 +538,14 @@ function generateLocalQuestions() {
         {
             id: 71,
             category: "Ciencia y Tecnología",
-            question: "La secuencia correcta de los pasos del **Método Científico**, es:",
+            question: "La secuencia correcta de los pasos del Método Científico, es:",
             options: ["observación, problema, hipótesis, experimentación y documentación.", "observación, problema, hipótesis, experimentación y conclusiones.", "observación, hipótesis, problema, experimentación y conclusiones.", "observación, problema, experimentación, hipótesis y conclusiones.", "problema, observación, hipótesis, experimentación y conclusiones."],
             correct: 2
         },
         {
             id: 72,
             category: "Ciencia y Tecnología",
-            question: "El paso del **Método Científico** que comprueba la veracidad o falsedad de la hipótesis, es la:",
+            question: "El paso del Método Científico que comprueba la veracidad o falsedad de la hipótesis, es la:",
             options: ["observación", "problema", "experimentación", "documentación", "conclusión"],
             correct: 2
         },
@@ -559,7 +559,7 @@ function generateLocalQuestions() {
         {
             id: 74,
             category: "Ciencia y Tecnología",
-            question: "Al respecto señale lo correcto: 1. La arteria pulmonar transporta sangre pobre en $O_2$. 2. La vena pulmonar transporta sangre oxigenada. 3. La arteria pulmonar llega hasta los alvéolos pulmonares. 4. Las dos aurículas forman el corazón izquierdo y los dos ventrículos forman el corazón izquierdo. 5. El lado derecho del corazón no hay mezcla de sangre venosa con arterial. SON CIERTAS:",
+            question: "Al respecto señale lo correcto: 1. La arteria pulmonar transporta sangre pobre en O₂. 2. La vena pulmonar transporta sangre oxigenada. 3. La arteria pulmonar llega hasta los alvéolos pulmonares. 4. Las dos aurículas forman el corazón izquierdo y los dos ventrículos forman el corazón izquierdo. 5. El lado derecho del corazón no hay mezcla de sangre venosa con arterial. SON CIERTAS:",
             options: ["1, 2, 5", "1, 2, 3", "2, 3, 4", "2, 4, 5", "1, 4, 5"],
             correct: 1
         },
@@ -601,7 +601,7 @@ function generateLocalQuestions() {
         {
             id: 80,
             category: "Ciencia y Tecnología",
-            question: "Una célula en **Interfase**, se caracteriza por: 1. Presentar un intenso metabolismo. 2. Se duplican sus organelas. 3. Hay un intenso movimiento de la $ADN$. 4. Ocurre la citocinesis. 5. Ocurre la cariocinesis. SON CIERTAS:",
+            question: "Una célula en Interfase, se caracteriza por: 1. Presentar un intenso metabolismo. 2. Se duplican sus organelas. 3. Hay un intenso movimiento del ADN. 4. Ocurre la citocinesis. 5. Ocurre la cariocinesis. SON CIERTAS:",
             options: ["1, 2 y 3", "1, 2 y 4", "2, 3 y 4", "1, 2 y 5", "3, 4 y 5"],
             correct: 3
         },
@@ -615,98 +615,98 @@ function generateLocalQuestions() {
         {
             id: 82,
             category: "Ciencia y Tecnología",
-            question: "En la **profase** se realiza lo siguiente, excepto:",
+            question: "En la profase se realiza lo siguiente, excepto:",
             options: ["Se condensa la cromatina", "Se desintegra el nucléolo", "Se forman los filamentos de cromatina", "Se forma el huso acromático", "La cromatina divierte a su máximo grado de condensación"],
             correct: 4
         },
         {
             id: 83,
             category: "Ciencia y Tecnología",
-            question: "La **fotosíntesis** es un proceso que se caracteriza por: 1. Ser de la conversión de energía luminosa en energía física. 2. En la fase luminosa se realiza la fijación del $CO_2$. 3. En la fase luminosa se realiza la fotólisis del agua. 4. Se libera $CO_2$ a la atmósfera. 5. La fase luminosa se realiza en los tilacoides. SON CIERTAS:",
+            question: "La fotosíntesis es un proceso que se caracteriza por: 1. Ser de la conversión de energía luminosa en energía física. 2. En la fase luminosa se realiza la fijación del CO₂. 3. En la fase luminosa se realiza la fotólisis del agua. 4. Se libera CO₂ a la atmósfera. 5. La fase luminosa se realiza en los tilacoides. SON CIERTAS:",
             options: ["1, 2 y 3", "1, 3 y 4", "1, 3 y 5", "3, 4 y 5", "solo 2 y 3"],
             correct: 2
         },
         {
             id: 84,
             category: "Ciencia y Tecnología",
-            question: "Es una característica del **catabolismo**:",
+            question: "Es una característica del catabolismo:",
             options: ["generar moléculas complejas", "lo realizan células eucariotas y procariotas", "ocurren sólo reacciones endergónicas", "formación de compuestos intermedios", "demandan energía"],
             correct: 3
         },
         {
             id: 85,
             category: "Ciencia y Tecnología",
-            question: "Es un evento que se lleva a cabo en la **fase oscura**, excepto:",
-            options: ["fijación del $CO_2$", "reducción del fosfoglicerato.", "síntesis de glúcidos", "activación de la ribulosa.", "se realiza en las membranas tilacoidales"],
+            question: "Es un evento que se lleva a cabo en la fase oscura, excepto:",
+            options: ["fijación del CO₂", "reducción del fosfoglicerato.", "síntesis de glúcidos", "activación de la ribulosa.", "se realiza en las membranas tilacoidales"],
             correct: 4
         },
         {
             id: 86,
             category: "Ciencia y Tecnología",
-            question: "Al respecto, si 2 moles de $SO_2$ reaccionan con 3 moles de $H_2O$, los moles producidos de ácido sulfúrico, son:",
+            question: "Al respecto, si 2 moles de SO₂ reaccionan con 3 moles de H₂O, los moles producidos de ácido sulfúrico, son:",
             options: ["2", "1", "3", "4", "6"],
             correct: 1
         },
         {
             id: 87,
             category: "Ciencia y Tecnología",
-            question: "Si la pureza del ácido sulfúrico obtenido es del 98 %, la masa de un recipiente con ácido sulfúrico comercial, la **cantidad en gramos** del recipiente obtenida por la reacción química entre 10 moles de $SO_2$ y 6 moles de $H_2O$ (masa molar de azufre: 32 g/mol) es:",
+            question: "Si la pureza del ácido sulfúrico obtenido es del 98 %, la masa de un recipiente con ácido sulfúrico comercial, la cantidad en gramos del recipiente obtenida por la reacción química entre 10 moles de SO₂ y 6 moles de H₂O (masa molar de azufre: 32 g/mol) es:",
             options: ["98", "490", "980", "558", "400"],
             correct: 2
         },
         {
             id: 88,
             category: "Ciencia y Tecnología",
-            question: "Si reaccionan 10 moles de $SO_2$ y 6 moles de $H_2O$; así mismo, se recuperan solamente 490 g de $H_2SO_4$, el **rendimiento** de la reacción en: (masa molar del azufre: 32 g/mol)",
+            question: "Si reaccionan 10 moles de SO₂ y 6 moles de H₂O; así mismo, se recuperan solamente 490 g de H₂SO₄, el rendimiento de la reacción es: (masa molar del azufre: 32 g/mol)",
             options: ["16,5 %", "23,1 %", "49,0 %", "57,1 %", "83,3 %"],
             correct: 4
         },
         {
             id: 89,
             category: "Ciencia y Tecnología",
-            question: "La **reacción química** que representa el tratamiento del óxido férrico, es:",
-            options: ["$FeO + C \\longrightarrow Fe + CO$", "$FeO + CO \\longrightarrow Fe + CO_2$", "$2Fe_2O_3 + 3C \\longrightarrow 4Fe + 3CO_2$", "$Fe + C \\longrightarrow FeC$", "$2Fe_2O_3 + O_2 \\longrightarrow 2Fe_2O_3 + O_2$"],
+            question: "La reacción química que representa el tratamiento del óxido férrico, es:",
+            options: ["FeO + C → Fe + CO", "FeO + CO → Fe + CO₂", "2Fe₂O₃ + 3C → 4Fe + 3CO₂", "Fe + C → FeC", "2Fe₂O₃ + O₂ → 2Fe₂O₃ + O₂"],
             correct: 4
         },
         {
             id: 90,
             category: "Ciencia y Tecnología",
-            question: "Si 4 moles de óxido férrico reaccionan con exceso de carbono, la **masa de hierro**, en gramos, que se obtendría sin pérdidas, es:",
+            question: "Si 4 moles de óxido férrico reaccionan con exceso de carbono, la masa de hierro, en gramos, que se obtendría sin pérdidas, es:",
             options: ["28", "56", "112", "224", "448"],
             correct: 4
         },
         {
             id: 91,
             category: "Ciencia y Tecnología",
-            question: "Si reaccionan 2 moles de óxido férrico con 3 moles de carbono, los gramos de **dióxido de carbono** liberados al medioambiente, son:",
+            question: "Si reaccionan 2 moles de óxido férrico con 3 moles de carbono, los gramos de dióxido de carbono liberados al medioambiente, son:",
             options: ["44", "56", "88", "132", "264"],
             correct: 3
         },
         {
             id: 92,
             category: "Ciencia y Tecnología",
-            question: "El cociente de moles de $O_{2(g)}$ para combustionar 1 mol de propano, son:",
+            question: "El cociente de moles de O₂(g) para combustionar 1 mol de propano, son:",
             options: ["1", "2", "3", "4", "5"],
             correct: 4
         },
         {
             id: 93,
             category: "Ciencia y Tecnología",
-            question: "Los gramos de $CO_{2(g)}$ producidos al combustionarse completamente 1 mol de propano, son:",
+            question: "Los gramos de CO₂(g) producidos al combustionarse completamente 1 mol de propano, son:",
             options: ["94", "132", "120", "150", "88"],
             correct: 1
         },
         {
             id: 94,
             category: "Ciencia y Tecnología",
-            question: "Las **velocidades** de ambos buses expresadas, en Km/hr, son:",
+            question: "Las velocidades de ambos buses expresadas, en Km/hr, son:",
             options: ["50; 80", "50; 40", "60; 80", "60; 40", "85; 90"],
             correct: 1
         },
         {
             id: 95,
             category: "Ciencia y Tecnología",
-            question: "El tiempo en horas y la distancia a Trujillo en **Km** cuando los buses se cruzan, respectivamente, son:",
+            question: "El tiempo en horas y la distancia a Trujillo en Km cuando los buses se cruzan, respectivamente, son:",
             options: ["3; 60", "3; 40", "3; 40", "4; 60", "3; 50"],
             correct: 4
         },
@@ -720,33 +720,34 @@ function generateLocalQuestions() {
         {
             id: 97,
             category: "Ciencia y Tecnología",
-            question: "La **eficiencia** a del motor térmico es:",
+            question: "La eficiencia del motor térmico es:",
             options: ["20 %", "30 %", "40 %", "50 %", "60 %"],
             correct: 1
         },
         {
             id: 98,
             category: "Ciencia y Tecnología",
-            question: "El **calor** $(en~J)$ suministrado por la fuente caliente, es:",
+            question: "El calor (en J) suministrado por la fuente caliente, es:",
             options: ["20,500", "20,400", "20,160", "20,050", "20,000"],
             correct: 2
         },
         {
             id: 99,
             category: "Ciencia y Tecnología",
-            question: "El **calor** $(en~J)$ expulsado hacia el foco frío, es:",
+            question: "El calor (en J) expulsado hacia el foco frío, es:",
             options: ["12,000", "12,100", "12,200", "12,300", "12,400"],
             correct: 4
         },
         {
             id: 100,
             category: "Ciencia y Tecnología",
-            question: "La **densidad** del objeto en $\\text{kg/m}^3$, es:",
+            question: "La densidad del objeto en kg/m³, es:",
             options: ["100", "150", "200", "250", "300"],
             correct: 2
         }
     ];
 }
+
 
 function setupExam() {
     document.getElementById('introScreen').classList.add('hidden');
